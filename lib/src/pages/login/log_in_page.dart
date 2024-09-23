@@ -12,13 +12,13 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: AppColors.background,
       body: Column(
         children: [
           Expanded(
             child: Row(
-              children: const [
+              children: [
                 _FormSection(),
                 _ImageSection(),
               ],
@@ -74,7 +74,10 @@ class _FormSection extends StatelessWidget {
                     const SizedBox(width: 18),
                     const Text(
                       "Google",
-                      style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500, fontSize: 16),
+                      style: TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16),
                     )
                   ],
                 ),
@@ -98,7 +101,10 @@ class _FormSection extends StatelessWidget {
                     const SizedBox(width: 18),
                     const Text(
                       "Facebook",
-                      style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500, fontSize: 16),
+                      style: TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16),
                     )
                   ],
                 ),
@@ -107,8 +113,8 @@ class _FormSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 25),
-          Row(
-            children: const [
+          const Row(
+            children: [
               Flexible(child: Divider()),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 13),
@@ -160,7 +166,9 @@ class _FormSection extends StatelessWidget {
           const SizedBox(height: 25),
           Row(
             children: [
-              SizedBox(width: 20, child: Checkbox(value: false, onChanged: (newValue) {})),
+              SizedBox(
+                  width: 20,
+                  child: Checkbox(value: false, onChanged: (newValue) {})),
               const SizedBox(width: 10),
               const Text(
                 "Remember me",
@@ -169,7 +177,10 @@ class _FormSection extends StatelessWidget {
               const Spacer(),
               const Text(
                 "Reset Password?",
-                style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500, fontSize: 16),
+                style: TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16),
               ),
             ],
           ),
@@ -181,7 +192,10 @@ class _FormSection extends StatelessWidget {
             color: AppColors.primary,
             child: const Text(
               "Log in",
-              style: TextStyle(color: AppColors.neutral, fontWeight: FontWeight.w500, fontSize: 16),
+              style: TextStyle(
+                  color: AppColors.neutral,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16),
             ),
             onPressed: () {},
           ),
@@ -195,15 +209,20 @@ class _FormSection extends StatelessWidget {
               ),
               TextButton(
                 style: TextButton.styleFrom(
-                  primary: Colors.transparent,
-                  onSurface: Colors.transparent,
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: Colors.transparent,
                 ),
                 onPressed: () {
-                  GetIt.I.get<NavigationService>().to(routeName: PageRoutes.signup);
+                  GetIt.I
+                      .get<NavigationService>()
+                      .to(routeName: PageRoutes.signup);
                 },
                 child: const Text(
                   " New Account",
-                  style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500, fontSize: 16),
+                  style: TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16),
                 ),
               )
             ],

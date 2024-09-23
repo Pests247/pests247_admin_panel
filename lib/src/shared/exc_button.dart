@@ -35,8 +35,8 @@ class WonsButton extends StatelessWidget {
     return ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-            primary: color ?? AppColors.background,
-            onSurface: color ?? AppColors.background,
+            backgroundColor: color ?? AppColors.background,
+            foregroundColor: color ?? AppColors.background,
             elevation: 0.0,
             shadowColor: Colors.transparent,
             padding: EdgeInsets.symmetric(vertical: verticalPadding ?? 15, horizontal: horizontalPadding ?? 0),

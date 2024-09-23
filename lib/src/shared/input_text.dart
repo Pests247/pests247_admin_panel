@@ -112,18 +112,32 @@ class _InputTextState extends State<InputText> {
   }
 
   TextStyle? labelStyle(context) {
-    return _focusNode.hasFocus ? labelTextFieldTextStyle(context) : textFieldPlaceholderTextStyle(context);
+    return _focusNode.hasFocus
+        ? labelTextFieldTextStyle(context)
+        : textFieldPlaceholderTextStyle(context);
   }
 
-  labelTextFieldTextStyle(context) =>
-      TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w600, height: 1.4);
+  labelTextFieldTextStyle(context) => TextStyle(
+      fontSize: 14,
+      color: Theme.of(context).primaryColor,
+      fontWeight: FontWeight.w600,
+      height: 1.4);
 
-  textFieldPlaceholderTextStyle(context) =>
-      TextStyle(fontSize: 14, color: Theme.of(context).hintColor, fontWeight: FontWeight.w600, height: 1.4);
+  textFieldPlaceholderTextStyle(context) => TextStyle(
+      fontSize: 14,
+      color: Theme.of(context).hintColor,
+      fontWeight: FontWeight.w600,
+      height: 1.4);
 
-  errorTextStyle(context) =>
-      TextStyle(fontSize: 10, color: Theme.of(context).errorColor, fontWeight: FontWeight.w500, height: 1.4);
+  errorTextStyle(context) => TextStyle(
+      fontSize: 10,
+      color: Theme.of(context).colorScheme.error,
+      fontWeight: FontWeight.w500,
+      height: 1.4);
 
   textFieldTextStyle(context) => TextStyle(
-      fontSize: 14, color: Theme.of(context).textTheme.bodyText1!.color, fontWeight: FontWeight.w500, height: 1.4);
+      fontSize: 14,
+      color: Theme.of(context).textTheme.bodyMedium!.color,
+      fontWeight: FontWeight.w500,
+      height: 1.4);
 }

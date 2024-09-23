@@ -36,5 +36,8 @@ class AppStyles {
   );
 }
 
-errorTextStyle(context) =>
-    TextStyle(fontSize: 10, color: Theme.of(context).errorColor, fontWeight: FontWeight.w500, height: 1.4);
+errorTextStyle(context) => TextStyle(
+    fontSize: 10,
+    color: Theme.of(context).colorScheme.error,
+    fontWeight: FontWeight.w500,
+    height: 1.4);
