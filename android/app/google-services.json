@@ -1,0 +1,134 @@
+{
+  "project_info": {
+    "project_number": "622260458070",
+    "project_id": "el-talk",
+    "storage_bucket": "el-talk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622260458070:android:705e943f08b7ac6a9261f7",
+        "android_client_info": {
+          "package_name": "com.example.admin_dashboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "622260458070-coep9dk6hjn7ta8e16df0apnant0esks.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWkYLbVthEoWvT3IqMMM6Jj3321YQ4wbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "622260458070-coep9dk6hjn7ta8e16df0apnant0esks.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "622260458070-lvlc178a1v53e8soic878sfikrhh410t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.elTalk"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622260458070:android:ac07a81f47f596579261f7",
+        "android_client_info": {
+          "package_name": "com.example.elTalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "622260458070-6aom33u3vaf7dpn4hc2svhc9c6m1aoao.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.elTalk",
+            "certificate_hash": "55b6c58514b11b6f6269cbec30cf45961afe0fcc"
+          }
+        },
+        {
+          "client_id": "622260458070-coep9dk6hjn7ta8e16df0apnant0esks.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWkYLbVthEoWvT3IqMMM6Jj3321YQ4wbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "622260458070-coep9dk6hjn7ta8e16df0apnant0esks.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "622260458070-lvlc178a1v53e8soic878sfikrhh410t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.elTalk"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622260458070:android:09e476e66fe7ce0e9261f7",
+        "android_client_info": {
+          "package_name": "com.example.el_talk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "622260458070-r2blntia92845kmrr37tdr0f4aqff7m0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.el_talk",
+            "certificate_hash": "55b6c58514b11b6f6269cbec30cf45961afe0fcc"
+          }
+        },
+        {
+          "client_id": "622260458070-coep9dk6hjn7ta8e16df0apnant0esks.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWkYLbVthEoWvT3IqMMM6Jj3321YQ4wbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "622260458070-coep9dk6hjn7ta8e16df0apnant0esks.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "622260458070-lvlc178a1v53e8soic878sfikrhh410t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.elTalk"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

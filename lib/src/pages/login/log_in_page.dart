@@ -1,6 +1,7 @@
 import 'package:admin_dashboard/src/navigation/navigation_service.dart';
 import 'package:admin_dashboard/src/pages/routes/routes.dart';
 import 'package:admin_dashboard/src/res/colors.dart';
+import 'package:admin_dashboard/src/services/google_signin.dart';
 import 'package:admin_dashboard/src/shared/exc_button.dart';
 import 'package:admin_dashboard/src/shared/input_text.dart';
 import 'package:flutter/material.dart';
@@ -81,7 +82,9 @@ class _FormSection extends StatelessWidget {
                     )
                   ],
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  GoogleSignInService.signInWithGoogle(context);
+                },
               ),
               const SizedBox(width: 22),
               WonsButton(
