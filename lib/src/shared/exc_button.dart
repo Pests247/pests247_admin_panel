@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../res/colors.dart';
 
-class WonsButton extends StatelessWidget {
+class AppButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final Widget? child;
   final String? text;
@@ -13,7 +13,7 @@ class WonsButton extends StatelessWidget {
   final double height;
   final double width;
   final double? borderRadius;
-  const WonsButton(
+  const AppButton(
       {Key? key,
       this.onPressed,
       this.child,
@@ -39,11 +39,15 @@ class WonsButton extends StatelessWidget {
             foregroundColor: color ?? AppColors.background,
             elevation: 0.0,
             shadowColor: Colors.transparent,
-            padding: EdgeInsets.symmetric(vertical: verticalPadding ?? 15, horizontal: horizontalPadding ?? 0),
+            padding: EdgeInsets.symmetric(
+                vertical: verticalPadding ?? 15,
+                horizontal: horizontalPadding ?? 0),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius ?? 10),
               side: BorderSide(
-                  color: onPressed == null ? Colors.transparent : borderColor ?? color ?? AppColors.background),
+                  color: onPressed == null
+                      ? Colors.transparent
+                      : borderColor ?? color ?? AppColors.background),
             ),
             minimumSize: Size(width, height)),
         child: text != null ? Text(text!, style: buttonTextStyle()) : child);
@@ -62,5 +66,6 @@ class WonsButton extends StatelessWidget {
 
 Widget visibilityToggle(Function? onToggle, bool _isHidden) => InkWell(
       onTap: onToggle != null ? () => onToggle() : null,
-      child: Icon(_isHidden ? Icons.visibility : Icons.visibility_off, color: AppColors.primary),
+      child: Icon(_isHidden ? Icons.visibility : Icons.visibility_off,
+          color: AppColors.primary),
     );

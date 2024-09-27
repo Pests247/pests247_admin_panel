@@ -1,4 +1,5 @@
 import 'package:admin_dashboard/src/navigation/navigation_service.dart';
+import 'package:admin_dashboard/src/pages/homepage/homepage.dart';
 import 'package:admin_dashboard/src/pages/routes/routes.dart';
 import 'package:admin_dashboard/src/res/colors.dart';
 import 'package:admin_dashboard/src/services/google_signin.dart';
@@ -56,7 +57,7 @@ class _FormSection extends StatelessWidget {
           const SizedBox(height: 41),
           Row(
             children: [
-              WonsButton(
+              AppButton(
                 height: 50,
                 width: 162,
                 horizontalPadding: 0,
@@ -87,7 +88,7 @@ class _FormSection extends StatelessWidget {
                 },
               ),
               const SizedBox(width: 22),
-              WonsButton(
+              AppButton(
                 height: 50,
                 width: 162,
                 horizontalPadding: 0,
@@ -188,7 +189,7 @@ class _FormSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 40),
-          WonsButton(
+          AppButton(
             height: 50,
             width: 348,
             verticalPadding: 0,
@@ -200,7 +201,10 @@ class _FormSection extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                   fontSize: 16),
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const Homepage()));
+            },
           ),
           const SizedBox(height: 30),
           Row(

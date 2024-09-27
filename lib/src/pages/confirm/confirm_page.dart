@@ -34,14 +34,17 @@ class ConfirmPage extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 25.63),
               ),
               const SizedBox(height: 36),
-              WonsButton(
+              AppButton(
                 height: 50,
                 width: 169,
                 verticalPadding: 0,
                 color: AppColors.primary,
                 child: const Text(
                   "Go to Home",
-                  style: TextStyle(color: AppColors.neutral, fontWeight: FontWeight.w400, fontSize: 14),
+                  style: TextStyle(
+                      color: AppColors.neutral,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14),
                 ),
                 onPressed: () {},
               ),

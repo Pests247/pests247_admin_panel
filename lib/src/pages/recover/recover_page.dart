@@ -52,17 +52,22 @@ class RecoverPage extends StatelessWidget {
                 enabled: true,
               ),
               const SizedBox(height: 25),
-              WonsButton(
+              AppButton(
                 height: 50,
                 width: 502,
                 verticalPadding: 0,
                 color: AppColors.primary,
                 child: const Text(
                   "Reset Your Password",
-                  style: TextStyle(color: AppColors.neutral, fontWeight: FontWeight.w400, fontSize: 14),
+                  style: TextStyle(
+                      color: AppColors.neutral,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14),
                 ),
                 onPressed: () {
-                  GetIt.I.get<NavigationService>().to(routeName: PageRoutes.confirm);
+                  GetIt.I
+                      .get<NavigationService>()
+                      .to(routeName: PageRoutes.confirm);
                 },
               ),
             ],

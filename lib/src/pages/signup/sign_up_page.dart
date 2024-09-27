@@ -57,12 +57,13 @@ class _FormSection extends StatelessWidget {
                   const SizedBox(height: 30),
                   const Text(
                     "Sign Up",
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 25.63),
+                    style:
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 25.63),
                   ),
                   const SizedBox(height: 41),
                   Row(
                     children: [
-                      WonsButton(
+                      AppButton(
                         height: 50,
                         width: 162,
                         horizontalPadding: 0,
@@ -81,14 +82,17 @@ class _FormSection extends StatelessWidget {
                             const SizedBox(width: 18),
                             const Text(
                               "Google",
-                              style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500, fontSize: 16),
+                              style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16),
                             )
                           ],
                         ),
                         onPressed: () {},
                       ),
                       const SizedBox(width: 22),
-                      WonsButton(
+                      AppButton(
                         height: 50,
                         width: 162,
                         horizontalPadding: 0,
@@ -105,7 +109,10 @@ class _FormSection extends StatelessWidget {
                             const SizedBox(width: 18),
                             const Text(
                               "Facebook",
-                              style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500, fontSize: 16),
+                              style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16),
                             )
                           ],
                         ),
@@ -121,7 +128,8 @@ class _FormSection extends StatelessWidget {
                         padding: EdgeInsets.symmetric(horizontal: 13),
                         child: Text(
                           "Or",
-                          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 15),
                         ),
                       ),
                       Flexible(child: Divider()),
@@ -132,7 +140,8 @@ class _FormSection extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "Full Name",
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
                   ),
                   const SizedBox(height: 9),
@@ -150,7 +159,8 @@ class _FormSection extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "Email Address",
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
                   ),
                   const SizedBox(height: 9),
@@ -168,7 +178,8 @@ class _FormSection extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "User name",
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
                   ),
                   const SizedBox(height: 9),
@@ -186,7 +197,8 @@ class _FormSection extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "Password",
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
                   ),
                   const SizedBox(height: 9),
@@ -198,29 +210,42 @@ class _FormSection extends StatelessWidget {
                     textInputAction: TextInputAction.done,
                     isPassword: true,
                     enabled: true,
-                    suffixIcon: visibilityToggle(togglePasswordVisibility, true),
+                    suffixIcon:
+                        visibilityToggle(togglePasswordVisibility, true),
                   ),
                   const SizedBox(height: 25),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(width: 20, child: Checkbox(value: false, onChanged: (newValue) {})),
+                      SizedBox(
+                          width: 20,
+                          child:
+                              Checkbox(value: false, onChanged: (newValue) {})),
                       const SizedBox(width: 10),
                       Expanded(
                         child: RichText(
                           overflow: TextOverflow.clip,
                           text: const TextSpan(
                             text: 'By creating an account you agree to the',
-                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, height: 1.4),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                                height: 1.4),
                             children: <TextSpan>[
                               TextSpan(
                                 text: ' terms of use',
-                                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: AppColors.primary),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                    color: AppColors.primary),
                               ),
                               TextSpan(text: ' and our '),
                               TextSpan(
                                 text: 'privacy policy.',
-                                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: AppColors.primary),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                    color: AppColors.primary),
                               ),
                             ],
                           ),
@@ -229,17 +254,22 @@ class _FormSection extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 40),
-                  WonsButton(
+                  AppButton(
                     height: 50,
                     width: 348,
                     verticalPadding: 0,
                     color: AppColors.primary,
                     child: const Text(
                       "Create account",
-                      style: TextStyle(color: AppColors.neutral, fontWeight: FontWeight.w500, fontSize: 16),
+                      style: TextStyle(
+                          color: AppColors.neutral,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16),
                     ),
                     onPressed: () {
-                      GetIt.I.get<NavigationService>().to(routeName: PageRoutes.recover);
+                      GetIt.I
+                          .get<NavigationService>()
+                          .to(routeName: PageRoutes.recover);
                     },
                   ),
                   const SizedBox(height: 30),
@@ -248,15 +278,21 @@ class _FormSection extends StatelessWidget {
                     children: [
                       const Text(
                         "Already have an account?",
-                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 16),
                       ),
                       TextButton(
                         onPressed: () {
-                          GetIt.I.get<NavigationService>().to(routeName: PageRoutes.login);
+                          GetIt.I
+                              .get<NavigationService>()
+                              .to(routeName: PageRoutes.login);
                         },
                         child: const Text(
                           " Log in",
-                          style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500, fontSize: 16),
+                          style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16),
                         ),
                       )
                     ],

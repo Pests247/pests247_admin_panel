@@ -58,7 +58,9 @@ class UserProvider with ChangeNotifier {
 
   Future<void> fetchAllUsers() async {
     allUsers = await FirestoreServices().getLeaderBoardData();
-    print(allUsers);
+    for (var user in allUsers) {
+      print(user.toJson());
+    }
   }
 
   void updateProfilePic(String profilePicUrl) {

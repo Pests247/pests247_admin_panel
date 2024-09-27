@@ -1,9 +1,12 @@
+import 'package:admin_dashboard/src/gifts/all_gifts.dart';
 import 'package:admin_dashboard/src/models/user_model.dart';
 import 'package:admin_dashboard/src/pages/logout/logout.dart';
+import 'package:admin_dashboard/src/pages/premium/all_premium.dart';
 import 'package:admin_dashboard/src/pages/users/all_users.dart';
 import 'package:admin_dashboard/src/providers/user_provider.dart';
 import 'package:admin_dashboard/src/services/firestore_service.dart';
 import 'package:admin_dashboard/src/pages/settings/setings.dart';
+import 'package:admin_dashboard/src/utility/color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -50,7 +53,7 @@ class _HomepageState extends State<Homepage> {
     final height = MediaQuery.sizeOf(context).height;
     final width = MediaQuery.sizeOf(context).width;
 
-    Widget welcomeBody = SizedBox(
+    homepageCustomWidget = SizedBox(
       height: height,
       width: width * 0.25,
       child: Column(
@@ -104,10 +107,24 @@ class _HomepageState extends State<Homepage> {
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return const Center(child: Text('No Users found.'));
               } else {
-                return const AllUsers();
+                return AllUsers(
+                  users: snapshot.data ?? [],
+                );
               }
             },
           );
+        });
+        break;
+
+      case 1:
+        setState(() {
+          homepageCustomWidget = const AllPremium();
+        });
+        break;
+
+      case 2:
+        setState(() {
+          homepageCustomWidget = const AllGifts();
         });
         break;
 
@@ -167,7 +184,7 @@ class _HomepageState extends State<Homepage> {
             width: isExpanded ? 200 : 70,
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
+              color: CustomColors.greyColor,
               borderRadius: BorderRadius.circular(20.0),
             ),
             margin: const EdgeInsets.all(16.0),
@@ -232,7 +249,11 @@ class _HomepageState extends State<Homepage> {
                           fontWeight: FontWeight.bold,
                           letterSpacing: 2.0,
                         ),
-                        child: Image.asset("assets/icons/logo.png"),
+                        child: Image.asset(
+                          "assets/png/logo.png",
+                          height: width * 0.03,
+                          width: width * 0.03,
+                        ),
                         // child: Text(
                         //   'IE',
                         // ),
@@ -282,16 +303,11 @@ class _HomepageState extends State<Homepage> {
                               child: Row(
                                 children: [
                                   SizedBox(
-                                    height: width * 0.015,
-                                    width: width * 0.015,
+                                    height: width * 0.018,
+                                    width: width * 0.018,
                                     child: Image.asset(
                                       drawerImages[index],
                                       filterQuality: FilterQuality.high,
-                                      color: isExpanded
-                                          ? _selectedIndex == index
-                                              ? Colors.white
-                                              : Colors.black
-                                          : Colors.grey,
                                     ),
                                   ),
                                   const SizedBox(width: 16.0),
@@ -400,30 +416,30 @@ class _HomepageState extends State<Homepage> {
                           ],
                         ),
                       ),
-                      (_selectedIndex == 1 || _selectedIndex == 2)
-                          ? Expanded(
-                              flex: 1,
-                              child: Row(
-                                children: [
-                                  const Text(
-                                    "Total: ",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  // ValueListenableBuilder(
-                                  //     valueListenable: _selectedIndex == 1
-                                  //         ? studentLength
-                                  //         : teacherLength,
-                                  //     builder: (context, value, child) {
-                                  //       return Text(
-                                  //         value.toString(),
-                                  //       );
-                                  //     })
-                                ],
-                              ),
-                            )
-                          : Container(),
+                      // (_selectedIndex == 1 || _selectedIndex == 2)
+                      //     ? Expanded(
+                      //         flex: 1,
+                      //         child: Row(
+                      //           children: [
+                      //             const Text(
+                      //               "Total: ",
+                      //               style: TextStyle(
+                      //                 fontWeight: FontWeight.bold,
+                      //               ),
+                      //             ),
+                      //             // ValueListenableBuilder(
+                      //             //     valueListenable: _selectedIndex == 1
+                      //             //         ? studentLength
+                      //             //         : teacherLength,
+                      //             //     builder: (context, value, child) {
+                      //             //       return Text(
+                      //             //         value.toString(),
+                      //             //       );
+                      //             //     })
+                      //           ],
+                      //         ),
+                      //       )
+                      //     : Container(),
                     ],
                   ),
                   Expanded(
