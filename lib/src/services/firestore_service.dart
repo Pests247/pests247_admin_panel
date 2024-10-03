@@ -1,12 +1,15 @@
 import 'package:admin_dashboard/src/models/message_model.dart';
+import 'package:admin_dashboard/src/models/moments/moment_model.dart';
+import 'package:admin_dashboard/src/models/promotion_model.dart';
 import 'package:admin_dashboard/src/models/room_model.dart';
 import 'package:admin_dashboard/src/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 
-class FirestoreServices {
+class FirestoreService {
   static final _auth = FirebaseAuth.instance;
   static final _db = FirebaseFirestore.instance;
 
@@ -166,6 +169,110 @@ class FirestoreServices {
     } catch (e) {
       print(e.toString());
       return null;
+    }
+  }
+
+  // Method to log user activities
+  Future<void> logUserActivity(
+      String userId, String action, String details) async {
+    await FirebaseFirestore.instance.collection('activityLogs').add({
+      'userId': userId,
+      'action': action,
+      'details': details,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+  }
+
+  final CollectionReference momentsCollection =
+      FirebaseFirestore.instance.collection('moments');
+
+  // Fetch all moments
+  Stream<List<MomentModel>> getMoments() {
+    return momentsCollection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        print(doc.data() as Map<String, dynamic>);
+        return MomentModel.fromMap(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  // Delete a moment by momentId
+  Future<void> deleteMoment(String momentId) async {
+    try {
+      await momentsCollection.doc(momentId).delete();
+    } catch (e) {
+      print('Failed to delete moment: $e');
+    }
+  }
+
+  // Reference to the 'promotions' collection in Firestore
+  final CollectionReference promotionsCollection =
+      FirebaseFirestore.instance.collection('promotions');
+
+  // Add a new promotion to Firestore
+  Future<void> addPromotion(Promotion promotion) async {
+    try {
+      // Create a new document in the 'promotions' collection prmotion ID
+      await promotionsCollection.doc(promotion.id).set(promotion.toJson());
+      print('Promotion added successfully');
+    } catch (e) {
+      print('Error adding promotion: $e');
+      rethrow;
+    }
+  }
+
+  // Update an existing promotion in Firestore
+  Future<void> updatePromotion(String id, Promotion updatedPromotion) async {
+    try {
+      // Update the document with the given ID
+      await promotionsCollection.doc(id).update(updatedPromotion.toJson());
+      print('Promotion updated successfully');
+    } catch (e) {
+      print('Error updating promotion: $e');
+      rethrow;
+    }
+  }
+
+  // Delete a promotion from Firestore and Firebase Storage
+  Future<void> deletePromotion(String id) async {
+    final FirebaseStorage storage = FirebaseStorage.instance;
+    try {
+      // Delete the document with the given ID from Firestore
+      await promotionsCollection.doc(id).delete();
+      print('Promotion deleted successfully from Firestore');
+
+      // Delete the image from Firebase Storage
+      await storage.refFromURL('promotions/$id').delete();
+      print('Image deleted successfully from Firebase Storage');
+    } catch (e) {
+      print('Error deleting promotion: $e');
+      rethrow;
+    }
+  }
+
+  // Fetch all promotions from Firestore
+  Stream<List<Promotion>> getPromotions() {
+    return promotionsCollection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return Promotion.fromJson(doc.data() as Map<String, dynamic>)
+            .copyWith(id: doc.id);
+      }).toList();
+    });
+  }
+
+  // Fetch a single promotion by its ID
+  Future<Promotion?> getPromotionById(String id) async {
+    try {
+      final doc = await promotionsCollection.doc(id).get();
+      if (doc.exists) {
+        return Promotion.fromJson(doc.data() as Map<String, dynamic>)
+            .copyWith(id: doc.id);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching promotion by ID: $e');
+      rethrow;
     }
   }
 }

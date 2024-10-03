@@ -45,7 +45,7 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _user = await FirestoreServices().fetchUserData();
+      _user = await FirestoreService().fetchUserData();
       _errorMessage = '';
     } catch (e) {
       _errorMessage = 'Error fetching user data: $e';
@@ -57,7 +57,7 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> fetchAllUsers() async {
-    allUsers = await FirestoreServices().getLeaderBoardData();
+    allUsers = await FirestoreService().getLeaderBoardData();
     for (var user in allUsers) {
       print(user.toJson());
     }

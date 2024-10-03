@@ -1,7 +1,10 @@
 import 'package:admin_dashboard/src/gifts/all_gifts.dart';
 import 'package:admin_dashboard/src/models/user_model.dart';
 import 'package:admin_dashboard/src/pages/logout/logout.dart';
+import 'package:admin_dashboard/src/pages/media/all_media.dart';
 import 'package:admin_dashboard/src/pages/premium/all_premium.dart';
+import 'package:admin_dashboard/src/pages/promotion/add_promotion_screen.dart';
+import 'package:admin_dashboard/src/pages/promotion/promotions_screen.dart';
 import 'package:admin_dashboard/src/pages/users/all_users.dart';
 import 'package:admin_dashboard/src/providers/user_provider.dart';
 import 'package:admin_dashboard/src/services/firestore_service.dart';
@@ -80,16 +83,20 @@ class _HomepageState extends State<Homepage> {
 
     List<String> drawerImages = [
       'assets/png/user.png',
+      'assets/png/media.png',
       'assets/png/premium.png',
       'assets/png/gift.png',
+      'assets/png/promotion.png',
       'assets/png/setting.png',
       'assets/png/logout.png',
     ];
 
     List<String> drawerTitles = [
-      'All Users',
-      'All Premium',
-      'All Gifts',
+      'Users',
+      'Media',
+      'Premium',
+      'Gifts',
+      'Promotions',
       'Setting',
       'Exit',
     ];
@@ -98,7 +105,7 @@ class _HomepageState extends State<Homepage> {
       case 0:
         setState(() {
           homepageCustomWidget = FutureBuilder<List<UserModel>>(
-            future: FirestoreServices().getLeaderBoardData(),
+            future: FirestoreService().getLeaderBoardData(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -118,23 +125,36 @@ class _HomepageState extends State<Homepage> {
 
       case 1:
         setState(() {
-          homepageCustomWidget = const AllPremium();
+          homepageCustomWidget = const AllMedia();
         });
         break;
 
       case 2:
         setState(() {
-          homepageCustomWidget = const AllGifts();
+          homepageCustomWidget = const AllPremium();
         });
         break;
 
       case 3:
         setState(() {
-          homepageCustomWidget = const SettingsScreen();
+          homepageCustomWidget = const AllGifts();
         });
         break;
 
       case 4:
+        setState(() {
+          floatingActionButtonTooltipString = 'Add Pormotion';
+          homepageCustomWidget = const PromotionsScreen();
+        });
+        break;
+
+      case 5:
+        setState(() {
+          homepageCustomWidget = const SettingsScreen();
+        });
+        break;
+
+      case 6:
         setState(() {
           homepageCustomWidget = const LogoutScreen();
         });
@@ -144,38 +164,31 @@ class _HomepageState extends State<Homepage> {
     }
 
     return Scaffold(
-      // floatingActionButton: widget.user == 'admin' &&
-      //         (_selectedIndex == 1 || _selectedIndex == 2)
-      //     ? IconButton(
-      //         onPressed: () async {
-      //           if (_selectedIndex == 1) {
-      //             bool isStudentAdded = await showAddStudentDialog(context, "");
-      //             // print("Is student added: $isStudentAdded");
-      //             if (isStudentAdded) {
-      //               refreshStudentList();
-      //             }
-      //           }
-      //           if (_selectedIndex == 2) {
-      //             bool isTeacherAdded = await showAddTeacherDialog(context);
-      //             // print("Is teacher added: $isTeacherAdded");
-      //             if (isTeacherAdded) {
-      //               refreshTeacherList();
-      //             }
-      //           }
-      //         },
-      //         icon: const Icon(
-      //           Icons.add,
-      //           color: Colors.white,
-      //         ),
-      //         style: ElevatedButton.styleFrom(
-      //           backgroundColor: Theme.of(context).primaryColor,
-      //           shape: RoundedRectangleBorder(
-      //             borderRadius: BorderRadius.circular(10.0),
-      //           ),
-      //         ),
-      //         tooltip: floatingActionButtonTooltipString,
-      //       )
-      //     : Container(),
+      floatingActionButton: _selectedIndex == 4
+          ? IconButton(
+              onPressed: () async {
+                if (_selectedIndex == 4) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AddPromotionScreen(),
+                    ),
+                  );
+                }
+              },
+              icon: const Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              tooltip: floatingActionButtonTooltipString,
+            )
+          : Container(),
       body: Row(
         children: [
           AnimatedContainer(
