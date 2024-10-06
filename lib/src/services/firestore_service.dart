@@ -286,6 +286,12 @@ class FirestoreService {
       final userDocs =
           await FirebaseFirestore.instance.collection('activityLogs').get();
 
+      // Check if userDocs is empty
+      if (userDocs.docs.isEmpty) {
+        print('No user documents found in activityLogs');
+        return allLogs; // Return empty list if no user documents
+      }
+
       // Create a batch for more efficient reads
       for (var userDoc in userDocs.docs) {
         final userLogsSnapshot = await FirebaseFirestore.instance
@@ -294,6 +300,7 @@ class FirestoreService {
             .collection('logs')
             .get();
 
+        // Ensure userLogsSnapshot is not empty
         allLogs.addAll(userLogsSnapshot.docs
             .map((logDoc) => ActivityLog.fromMap(logDoc.data())));
         print(
