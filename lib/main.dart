@@ -41,7 +41,7 @@ class App extends StatelessWidget {
       navigatorKey: GetIt.I.get<NavigationService>().navigatorKey,
       initialRoute: PageRoutes.root,
       onGenerateRoute: routes,
-      home: const Homepage(),
+      home: const LoginPage(),
     );
   }
 }

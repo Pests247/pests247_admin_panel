@@ -2,27 +2,109 @@ import 'package:admin_dashboard/src/navigation/navigation_service.dart';
 import 'package:admin_dashboard/src/pages/homepage/homepage.dart';
 import 'package:admin_dashboard/src/pages/routes/routes.dart';
 import 'package:admin_dashboard/src/res/colors.dart';
-import 'package:admin_dashboard/src/services/google_signin.dart';
 import 'package:admin_dashboard/src/shared/exc_button.dart';
 import 'package:admin_dashboard/src/shared/input_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  String email = '';
+  String password = '';
+  bool isPassHidden = true;
+
+  void togglePasswordVisibility() {
+    setState(() {
+      isPassHidden = !isPassHidden;
+    });
+  }
+
+  Future<void> login() async {
+    try {
+      // Check Firestore for admin access
+      DocumentSnapshot adminDoc =
+          await _firestore.collection('admins').doc(email).get();
+
+      if (adminDoc.exists && adminDoc['haveAccess'] == true) {
+        // Proceed with Firebase Authentication
+        UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+            email: email, password: password);
+
+        // Navigate to homepage if login is successful
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Homepage()),
+        );
+      } else {
+        // Show error if the admin does not exist or does not have access
+        _showErrorDialog("Access denied. You are not authorized.");
+      }
+    } on FirebaseAuthException catch (e) {
+      // Handle errors from Firebase Authentication
+      _showErrorDialog(e.message ?? "An error occurred during login.");
+    } catch (e) {
+      // Handle any other errors
+      _showErrorDialog("An unexpected error occurred.");
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Error"),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: AppColors.background,
       body: Column(
         children: [
           Expanded(
             child: Row(
               children: [
-                _FormSection(),
-                _ImageSection(),
+                FormSection(
+                  isPassHidden: isPassHidden,
+                  onEmailChanged: (value) {
+                    setState(() {
+                      email = value;
+                    });
+                  },
+                  onPasswordChanged: (value) {
+                    setState(() {
+                      password = value;
+                    });
+                  },
+                  togglePasswordVisibility: togglePasswordVisibility,
+                  onLogin: login,
+                ),
+                const _ImageSection(),
               ],
             ),
           )
@@ -32,8 +114,21 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-class _FormSection extends StatelessWidget {
-  const _FormSection({Key? key}) : super(key: key);
+class FormSection extends StatelessWidget {
+  const FormSection({
+    super.key,
+    required this.isPassHidden,
+    required this.onEmailChanged,
+    required this.onPasswordChanged,
+    required this.togglePasswordVisibility,
+    required this.onLogin,
+  });
+
+  final bool isPassHidden;
+  final ValueChanged<String> onEmailChanged;
+  final ValueChanged<String> onPasswordChanged;
+  final VoidCallback togglePasswordVisibility;
+  final Future<void> Function() onLogin;
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +139,11 @@ class _FormSection extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SvgPicture.asset(
-            "assets/svg/logo.svg",
-            width: 90,
-            height: 55.5,
+          Image.asset(
+            'assets/png/logo.png',
+            filterQuality: FilterQuality.high,
+            width: 200,
+            height: 150,
           ),
           const SizedBox(height: 30),
           const Text(
@@ -55,82 +151,6 @@ class _FormSection extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.w700, fontSize: 25.63),
           ),
           const SizedBox(height: 41),
-          Row(
-            children: [
-              AppButton(
-                height: 50,
-                width: 162,
-                horizontalPadding: 0,
-                color: AppColors.background,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: SvgPicture.asset(
-                        "assets/svg/google.svg",
-                        width: 18,
-                        height: 18,
-                      ),
-                    ),
-                    const SizedBox(width: 18),
-                    const Text(
-                      "Google",
-                      style: TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16),
-                    )
-                  ],
-                ),
-                onPressed: () {
-                  GoogleSignInService.signInWithGoogle(context);
-                },
-              ),
-              const SizedBox(width: 22),
-              AppButton(
-                height: 50,
-                width: 162,
-                horizontalPadding: 0,
-                color: AppColors.background,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: SvgPicture.asset(
-                        "assets/svg/facebook.svg",
-                      ),
-                    ),
-                    const SizedBox(width: 18),
-                    const Text(
-                      "Facebook",
-                      style: TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16),
-                    )
-                  ],
-                ),
-                onPressed: () {},
-              )
-            ],
-          ),
-          const SizedBox(height: 25),
-          const Row(
-            children: [
-              Flexible(child: Divider()),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 13),
-                child: Text(
-                  "Or",
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-                ),
-              ),
-              Flexible(child: Divider()),
-            ],
-          ),
-          const SizedBox(height: 31),
           const Align(
             alignment: Alignment.centerLeft,
             child: Text(
@@ -141,10 +161,10 @@ class _FormSection extends StatelessWidget {
           const SizedBox(height: 9),
           InputText(
             labelText: "example@gmail.com",
-            keyboardType: TextInputType.visiblePassword,
-            onChanged: (value) {},
+            keyboardType: TextInputType.emailAddress,
+            onChanged: onEmailChanged,
             onSaved: (val) {},
-            textInputAction: TextInputAction.done,
+            textInputAction: TextInputAction.next,
             isPassword: false,
             enabled: true,
           ),
@@ -160,40 +180,46 @@ class _FormSection extends StatelessWidget {
           InputText(
             labelText: "********",
             keyboardType: TextInputType.visiblePassword,
-            onChanged: (value) {},
+            onChanged: onPasswordChanged,
             onSaved: (val) {},
             textInputAction: TextInputAction.done,
-            isPassword: true,
+            isPassword: isPassHidden,
             enabled: true,
-            suffixIcon: visibilityToggle(togglePasswordVisibility, true),
+            suffixIcon: IconButton(
+              icon: Icon(
+                isPassHidden ? Icons.visibility_off : Icons.visibility,
+              ),
+              onPressed: togglePasswordVisibility,
+            ),
           ),
           const SizedBox(height: 25),
-          Row(
-            children: [
-              SizedBox(
-                  width: 20,
-                  child: Checkbox(value: false, onChanged: (newValue) {})),
-              const SizedBox(width: 10),
-              const Text(
-                "Remember me",
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-              ),
-              const Spacer(),
-              const Text(
-                "Reset Password?",
-                style: TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16),
-              ),
-            ],
-          ),
+          // Row(
+          //   children: [
+          //     SizedBox(
+          //         width: 20,
+          //         child: Checkbox(value: false, onChanged: (newValue) {})),
+          //     const SizedBox(width: 10),
+          //     const Text(
+          //       "Remember me",
+          //       style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+          //     ),
+          //     const Spacer(),
+          //     const Text(
+          //       "Reset Password?",
+          //       style: TextStyle(
+          //           color: AppColors.primary,
+          //           fontWeight: FontWeight.w500,
+          //           fontSize: 16),
+          //     ),
+          //   ],
+          // ),
           const SizedBox(height: 40),
           AppButton(
             height: 50,
             width: 348,
             verticalPadding: 0,
             color: AppColors.primary,
+            onPressed: onLogin,
             child: const Text(
               "Log in",
               style: TextStyle(
@@ -201,45 +227,39 @@ class _FormSection extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                   fontSize: 16),
             ),
-            onPressed: () {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const Homepage()));
-            },
           ),
           const SizedBox(height: 30),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "Don’t have account yet?",
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-              ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  foregroundColor: Colors.transparent,
-                ),
-                onPressed: () {
-                  GetIt.I
-                      .get<NavigationService>()
-                      .to(routeName: PageRoutes.signup);
-                },
-                child: const Text(
-                  " New Account",
-                  style: TextStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16),
-                ),
-              )
-            ],
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     const Text(
+          //       "Don’t have account yet?",
+          //       style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+          //     ),
+          //     TextButton(
+          //       style: TextButton.styleFrom(
+          //         backgroundColor: Colors.transparent,
+          //         foregroundColor: Colors.transparent,
+          //       ),
+          //       onPressed: () {
+          //         GetIt.I
+          //             .get<NavigationService>()
+          //             .to(routeName: PageRoutes.signup);
+          //       },
+          //       child: const Text(
+          //         " New Account",
+          //         style: TextStyle(
+          //             color: AppColors.primary,
+          //             fontWeight: FontWeight.w500,
+          //             fontSize: 16),
+          //       ),
+          //     )
+          //   ],
+          // ),
         ],
       ),
     );
   }
-
-  togglePasswordVisibility() {}
 }
 
 class _ImageSection extends StatelessWidget {

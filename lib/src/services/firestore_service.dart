@@ -1,4 +1,5 @@
 import 'package:admin_dashboard/src/models/message_model.dart';
+import 'package:admin_dashboard/src/models/moments/activity_log_model.dart';
 import 'package:admin_dashboard/src/models/moments/moment_model.dart';
 import 'package:admin_dashboard/src/models/promotion_model.dart';
 import 'package:admin_dashboard/src/models/room_model.dart';
@@ -160,7 +161,7 @@ class FirestoreService {
 
       if (doc.exists) {
         final data = doc.data() as Map<String, dynamic>;
-        print(UserModel.fromJson(data));
+        // print(UserModel.fromJson(data));
         return UserModel.fromJson(data);
       } else {
         print('User not found');
@@ -273,6 +274,97 @@ class FirestoreService {
     } catch (e) {
       print('Error fetching promotion by ID: $e');
       rethrow;
+    }
+  }
+
+  Future<List<ActivityLog>> fetchAllLogs() async {
+    List<ActivityLog> allLogs = [];
+
+    print('Fetching all logs from all users');
+
+    try {
+      final userDocs =
+          await FirebaseFirestore.instance.collection('activityLogs').get();
+
+      // Create a batch for more efficient reads
+      for (var userDoc in userDocs.docs) {
+        final userLogsSnapshot = await FirebaseFirestore.instance
+            .collection('activityLogs')
+            .doc(userDoc.id)
+            .collection('logs')
+            .get();
+
+        allLogs.addAll(userLogsSnapshot.docs
+            .map((logDoc) => ActivityLog.fromMap(logDoc.data())));
+        print(
+            'Fetched logs for userDoc (email): ${userDoc.id}, logs: ${userLogsSnapshot.docs.length}');
+      }
+
+      print('Total logs fetched: ${allLogs.length}');
+      return allLogs;
+    } catch (e) {
+      print('Error fetching all logs: $e');
+      return [];
+    }
+  }
+
+  /// Fetches all logs for a specific user identified by their [email].
+  Future<List<ActivityLog>> fetchUserLogs(String email) async {
+    try {
+      final userLogsSnapshot = await _db
+          .collection('activityLogs') // Collection for all activity logs
+          .doc(
+              email) // Document for the specific user identified by their email
+          .collection('logs') // Collection for the user's logs
+          .orderBy('timestamp', descending: true) // Order by timestamp
+          .get();
+
+      // Convert each document snapshot into an ActivityLog model
+      return userLogsSnapshot.docs
+          .map((doc) => ActivityLog.fromMap(doc.data()))
+          .toList();
+    } catch (e) {
+      print('Error fetching logs: $e');
+      return [];
+    }
+  }
+
+  /// Deletes a specific log for a user identified by [email] and [logId].
+  Future<void> deleteUserLog(String email, String logId) async {
+    try {
+      await _db
+          .collection('activityLogs') // Collection for all activity logs
+          .doc(
+              email) // Document for the specific user identified by their email
+          .collection('logs') // Collection for the user's logs
+          .doc(logId) // Specific log document identified by logId
+          .delete();
+
+      print('Log with ID: $logId deleted successfully.');
+    } catch (e) {
+      print('Error deleting log: $e');
+    }
+  }
+
+  /// Deletes all logs for a specific user identified by their [email].
+  Future<void> deleteAllUserLogs(String email) async {
+    try {
+      final userLogsSnapshot = await _db
+          .collection('activityLogs')
+          .doc(email)
+          .collection('logs')
+          .get();
+
+      final batch = _db.batch();
+
+      for (var doc in userLogsSnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+
+      await batch.commit();
+      print('All logs for user with email: $email deleted successfully.');
+    } catch (e) {
+      print('Error deleting all logs: $e');
     }
   }
 }

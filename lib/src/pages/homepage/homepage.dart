@@ -1,5 +1,6 @@
 import 'package:admin_dashboard/src/gifts/all_gifts.dart';
 import 'package:admin_dashboard/src/models/user_model.dart';
+import 'package:admin_dashboard/src/pages/activity_logs/logs_screen.dart';
 import 'package:admin_dashboard/src/pages/logout/logout.dart';
 import 'package:admin_dashboard/src/pages/media/all_media.dart';
 import 'package:admin_dashboard/src/pages/premium/all_premium.dart';
@@ -87,6 +88,7 @@ class _HomepageState extends State<Homepage> {
       'assets/png/premium.png',
       'assets/png/gift.png',
       'assets/png/promotion.png',
+      'assets/png/logs.png',
       'assets/png/setting.png',
       'assets/png/logout.png',
     ];
@@ -97,6 +99,7 @@ class _HomepageState extends State<Homepage> {
       'Premium',
       'Gifts',
       'Promotions',
+      'Acitivity Logs',
       'Setting',
       'Exit',
     ];
@@ -150,11 +153,17 @@ class _HomepageState extends State<Homepage> {
 
       case 5:
         setState(() {
-          homepageCustomWidget = const SettingsScreen();
+          homepageCustomWidget = const LogsScreen();
         });
         break;
 
       case 6:
+        setState(() {
+          homepageCustomWidget = const SettingsScreen();
+        });
+        break;
+
+      case 7:
         setState(() {
           homepageCustomWidget = const LogoutScreen();
         });
