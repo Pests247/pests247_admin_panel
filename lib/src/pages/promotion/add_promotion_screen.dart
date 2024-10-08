@@ -2,9 +2,9 @@ import 'package:admin_dashboard/src/models/promotion_model.dart';
 import 'package:admin_dashboard/src/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'dart:typed_data';
 
 import 'package:uuid/uuid.dart'; // For working with selected files in web
 
@@ -27,16 +27,34 @@ class AddPromotionScreenState extends State<AddPromotionScreen> {
 
   // Function to pick an image from the computer
   Future<void> _pickImage() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: false,
-    );
+    if (kIsWeb) {
+      // For web: Using FilePicker for web, enabling the selection of files
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+        withData: true, // Important for web to get file data
+      );
 
-    if (result != null) {
-      setState(() {
-        _selectedImageBytes = result.files.first.bytes;
-        _selectedImageName = result.files.first.name;
-      });
+      if (result != null && result.files.isNotEmpty) {
+        setState(() {
+          _selectedImageBytes =
+              result.files.first.bytes; // You can access bytes in web
+          _selectedImageName = result.files.first.name;
+        });
+      }
+    } else {
+      // For mobile: Using FilePicker for mobile
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+      );
+
+      if (result != null) {
+        setState(() {
+          _selectedImageBytes = result.files.first.bytes; // mobile use case
+          _selectedImageName = result.files.first.name;
+        });
+      }
     }
   }
 

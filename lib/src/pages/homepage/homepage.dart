@@ -197,10 +197,10 @@ class _HomepageState extends State<Homepage> {
     }
 
     return Scaffold(
-      floatingActionButton: _selectedIndex == 4
+      floatingActionButton: _selectedIndex == 2
           ? IconButton(
               onPressed: () async {
-                if (_selectedIndex == 4) {
+                if (_selectedIndex == 2) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(

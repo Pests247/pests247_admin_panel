@@ -34,49 +34,70 @@ class AllMedia extends StatelessWidget {
               return Card(
                 margin: const EdgeInsets.all(8.0),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: moment.userProfilePicture != null &&
-                                moment.userProfilePicture.isNotEmpty
-                            ? NetworkImage(moment.userProfilePicture)
-                            : const AssetImage('assets/png/user.png')
-                                as ImageProvider,
-                      ),
-                      title: Text(moment.userName ?? 'Unknown User'),
-                      subtitle: Text(moment.content ?? ''),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () async {
-                          final confirm = await showDialog(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: const Text('Delete Moment'),
-                              content: const Text(
-                                  'Are you sure you want to delete this moment?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(ctx).pop(false);
-                                  },
-                                  child: const Text('Cancel'),
+                    // Custom widget to align leading and trailing at the top
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            backgroundImage:
+                                moment.userProfilePicture != null &&
+                                        moment.userProfilePicture.isNotEmpty
+                                    ? NetworkImage(moment.userProfilePicture)
+                                    : const AssetImage('assets/png/user.png')
+                                        as ImageProvider,
+                          ),
+                          const SizedBox(width: 8.0),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  moment.userName ?? 'Unknown User',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(ctx).pop(true);
-                                  },
-                                  child: const Text('Delete'),
-                                ),
+                                Text(moment.content ?? ''),
                               ],
                             ),
-                          );
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () async {
+                              final confirm = await showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: const Text('Delete Moment'),
+                                  content: const Text(
+                                      'Are you sure you want to delete this moment?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(ctx).pop(false);
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(ctx).pop(true);
+                                      },
+                                      child: const Text('Delete'),
+                                    ),
+                                  ],
+                                ),
+                              );
 
-                          if (confirm == true) {
-                            await firestoreService
-                                .deleteMoment(moment.momentId ?? '');
-                          }
-                        },
+                              if (confirm == true) {
+                                await firestoreService
+                                    .deleteMoment(moment.momentId ?? '');
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ),
                     if (moment.mediaType != null && moment.mediaUrl != null)
