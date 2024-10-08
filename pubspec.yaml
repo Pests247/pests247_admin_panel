@@ -53,6 +53,24 @@ dependencies:
   firebase_storage: ^12.3.2
   file_picker: ^8.1.2
   uuid: ^4.5.1
+  flutter_launcher_icons: ^0.14.1
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/png/logo.png"
+  web:
+    generate: true
+    image_path: "assets/png/logo.png"
+    background_color: "#000000"
+    theme_color: "#000000"
+  windows:
+    generate: true
+    image_path: "assets/png/logo.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/png/logo.png"
 
 dev_dependencies:
   flutter_test:
