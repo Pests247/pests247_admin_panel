@@ -20,14 +20,29 @@ class UserDetailState extends State<UserDetail> {
     'deactivated'
   ];
 
-  // Current account status value
+  // List of possible premium status values
+  final List<String> _premiumStatusOptions = ['Yes', 'No'];
+
+  // Current account and premium status values
   late String _selectedAccountStatus;
+  late String _selectedPremiumStatus;
+
+  // Controllers for editable numeric fields
+  final TextEditingController _elCoinsController = TextEditingController();
+  final TextEditingController _elFragsController = TextEditingController();
+  final TextEditingController _rankPointsController = TextEditingController();
+  final TextEditingController _rankController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // Set initial value of _selectedAccountStatus to the user's current account status
+    // Set initial values
     _selectedAccountStatus = widget.user.accountStatus;
+    _selectedPremiumStatus = widget.user.premium ? 'Yes' : 'No';
+    _elCoinsController.text = '${widget.user.elCoins}';
+    _elFragsController.text = '${widget.user.elFrags}';
+    _rankPointsController.text = '${widget.user.rankPoints}';
+    _rankController.text = '${widget.user.rank}';
   }
 
   @override
@@ -67,22 +82,31 @@ class UserDetailState extends State<UserDetail> {
 
             const SizedBox(height: 20), // Spacer
 
-            // Section 2: Account Information with a Dropdown for Account Status
+            // Section 2: Account Information with Dropdowns
             _buildSectionTitle('Account Information'),
             _buildInfoCard(
               context,
               children: [
                 _buildDetailRow(
                     'Is Admin:', widget.user.isAdmin ? 'Yes' : 'No'),
-                _buildDetailRow(
-                    'Premium Status:', widget.user.premium ? 'Yes' : 'No'),
+                _buildDropdownRow('Premium Status:', _selectedPremiumStatus,
+                    _premiumStatusOptions, (String newValue) {
+                  setState(() {
+                    _selectedPremiumStatus = newValue;
+                  });
+                }),
                 _buildDetailRow(
                     'Is Online:', widget.user.isOnline ? 'Yes' : 'No'),
-                _buildDetailRow('ElCoins:', '${widget.user.elCoins}'),
-                _buildDetailRow('ElFrags:', '${widget.user.elFrags}'),
-                _buildDetailRow('Rank Points:', '${widget.user.rankPoints}'),
-                _buildDetailRow('Rank:', '${widget.user.rank}'),
-                _buildDropdownRow('Account Status:', _selectedAccountStatus),
+                _buildNumericInputRow('ElCoins:', _elCoinsController),
+                _buildNumericInputRow('ElFrags:', _elFragsController),
+                _buildNumericInputRow('Rank Points:', _rankPointsController),
+                _buildNumericInputRow('Rank:', _rankController),
+                _buildDropdownRow('Account Status:', _selectedAccountStatus,
+                    _accountStatusOptions, (String newValue) {
+                  setState(() {
+                    _selectedAccountStatus = newValue;
+                  });
+                }),
                 _buildUpdateButton(), // Update button
               ],
             ),
@@ -204,8 +228,9 @@ class UserDetailState extends State<UserDetail> {
     );
   }
 
-  // Helper function to build a dropdown row for account status selection
-  Widget _buildDropdownRow(String title, String currentValue) {
+  // Helper function to build a dropdown row for selection
+  Widget _buildDropdownRow(String title, String currentValue,
+      List<String> options, Function(String) onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -224,7 +249,7 @@ class UserDetailState extends State<UserDetail> {
             child: DropdownButton<String>(
               value: currentValue,
               isExpanded: true,
-              items: _accountStatusOptions.map((String value) {
+              items: options.map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -232,9 +257,7 @@ class UserDetailState extends State<UserDetail> {
               }).toList(),
               onChanged: (String? newValue) {
                 if (newValue != null) {
-                  setState(() {
-                    _selectedAccountStatus = newValue;
-                  });
+                  onChanged(newValue);
                 }
               },
             ),
@@ -244,41 +267,103 @@ class UserDetailState extends State<UserDetail> {
     );
   }
 
-  // Helper function to build the Update button
-  Widget _buildUpdateButton() {
+  // Helper function to build an editable numeric input row
+  Widget _buildNumericInputRow(String title, TextEditingController controller) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20.0),
-      child: ElevatedButton(
-        onPressed: _updateAccountStatus,
-        child: const Text('Update Account Status'),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            flex: 5,
+            child: TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter a number',
+              ),
+              onChanged: (value) {
+                // Optionally, you can add validation here
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // Function to update account status in Firestore and refresh UI
-  Future<void> _updateAccountStatus() async {
-    try {
-      // Reference to Firestore document (replace with your collection path)
-      final docRef =
-          FirebaseFirestore.instance.collection('users').doc(widget.user.uid);
+  // Helper function to build the update button
+  Widget _buildUpdateButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: ElevatedButton(
+        onPressed: () async {
+          // Prepare data for update
+          final updatedUser = UserModel(
+            isOnline: widget.user.isOnline,
+            visitors: widget.user.visitors,
+            follow: widget.user.follow,
+            followers: widget.user.followers,
+            giftReceived: widget.user.giftReceived,
+            giftSent: widget.user.giftSent,
+            uid: widget.user.uid,
+            userName: widget.user.userName,
+            email: widget.user.email,
+            phone: widget.user.phone,
+            country: widget.user.country,
+            gender: widget.user.gender,
+            age: widget.user.age,
+            nativeLanguage: widget.user.nativeLanguage,
+            preferredLanguages: widget.user.preferredLanguages,
+            selfIntroduction: widget.user.selfIntroduction,
+            profilePicUrl: widget.user.profilePicUrl,
+            coverPicUrl: widget.user.coverPicUrl,
+            deviceToken: widget.user.deviceToken,
+            isAdmin: widget.user.isAdmin,
+            elCoins: int.tryParse(_elCoinsController.text) ?? 0,
+            elFrags: int.tryParse(_elFragsController.text) ?? 0,
+            rankPoints: int.tryParse(_rankPointsController.text) ?? 0,
+            rank: int.tryParse(_rankController.text) ?? 0,
+            premium: _selectedPremiumStatus == 'Yes',
+            accountStatus: _selectedAccountStatus,
+            // Add other fields as necessary
+          );
 
-      // Update account status in Firestore
-      await docRef.update({'accountStatus': _selectedAccountStatus});
+          // Call update function here (make sure to implement it)
+          await _updateUserDetails(updatedUser);
+        },
+        child: const Text('Update User Details'),
+      ),
+    );
+  }
 
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Account status updated successfully')),
-      );
+  // Placeholder for the function to update user details in the database
+  Future<void> _updateUserDetails(UserModel updatedUser) async {
+    // Implement your update logic here, e.g., update Firestore or any database
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(updatedUser.uid)
+        .update({
+      'premium': updatedUser.premium,
+      'elCoins': updatedUser.elCoins,
+      'elFrags': updatedUser.elFrags,
+      'rankPoints': updatedUser.rankPoints,
+      'rank': updatedUser.rank,
+      'accountStatus': updatedUser.accountStatus,
+    });
 
-      // Refresh UI by updating the state
-      setState(() {
-        widget.user.accountStatus = _selectedAccountStatus;
-      });
-    } catch (e) {
-      // Show error message if the update fails
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update account status: $e')),
-      );
-    }
+    // Show a message after updating
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('User details updated successfully!')),
+    );
   }
 }

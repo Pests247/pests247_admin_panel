@@ -2,6 +2,7 @@ import 'package:admin_dashboard/src/models/message_model.dart';
 import 'package:admin_dashboard/src/models/moments/activity_log_model.dart';
 import 'package:admin_dashboard/src/models/moments/moment_model.dart';
 import 'package:admin_dashboard/src/models/promotion_model.dart';
+import 'package:admin_dashboard/src/models/query_model.dart';
 import 'package:admin_dashboard/src/models/room_model.dart';
 import 'package:admin_dashboard/src/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -372,6 +373,123 @@ class FirestoreService {
       print('All logs for user with email: $email deleted successfully.');
     } catch (e) {
       print('Error deleting all logs: $e');
+    }
+  }
+
+  Future<Map<String, String?>> fetchContactInfo() async {
+    try {
+      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('contacts')
+          .doc('contact_info')
+          .get();
+
+      // Check if the document exists
+      if (documentSnapshot.exists) {
+        // Retrieve the fields
+        String? email = documentSnapshot.get('email');
+        String? phone = documentSnapshot.get('phone');
+
+        // Return the values in a Map
+        return {'email': email, 'phone': phone};
+      } else {
+        print('Document does not exist.');
+        return {'email': null, 'phone': null};
+      }
+    } catch (e) {
+      print('Error fetching contact info: $e');
+      return {'email': null, 'phone': null};
+    }
+  }
+
+  Future<void> updateContactInfo(
+      {required String email, required String phone}) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('contacts')
+          .doc('contact_info')
+          .update({
+        'email': email,
+        'phone': phone,
+      });
+      print('Contact info updated successfully!');
+    } catch (e) {
+      print('Error updating contact info: $e');
+    }
+  }
+
+  // Method to fetch all FAQs from Firestore
+  Future<List<Map<String, String>>> fetchFAQs() async {
+    List<Map<String, String>> faqs = [];
+
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('frequent_questions')
+          .get();
+
+      // Iterate through the documents in the collection
+      for (var doc in querySnapshot.docs) {
+        faqs.add({
+          'question': doc.get('question'),
+          'answer': doc.get('answer'),
+          'id': doc.get('id'),
+        });
+      }
+    } catch (e) {
+      print('Error fetching FAQs: $e');
+    }
+
+    return faqs;
+  }
+
+// Method to add a new FAQ with a custom document ID
+  Future<void> addFAQ(String question, String answer) async {
+    try {
+      // Generate a unique ID using the uuid package
+      String docId = const Uuid().v4();
+
+      // Add the new FAQ to Firestore with the custom document ID
+      await FirebaseFirestore.instance
+          .collection('frequent_questions')
+          .doc(docId)
+          .set({
+        'id': docId, // Store the document ID in the 'id' field
+        'question': question,
+        'answer': answer,
+      });
+
+      print('FAQ added successfully with ID: $docId');
+    } catch (e) {
+      print('Error adding FAQ: $e');
+    }
+  }
+
+  // Method to delete an FAQ by document ID
+  Future<void> deleteFAQ(String docId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('frequent_questions')
+          .doc(docId)
+          .delete();
+      print('FAQ deleted successfully');
+    } catch (e) {
+      print('Error deleting FAQ: $e');
+    }
+  }
+
+  // Method to fetch all queries from Firestore
+  Future<List<QueryModel>> fetchAllQueries() async {
+    try {
+      // Fetch all documents in the 'queries' collection
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('queries').get();
+
+      // Convert each document to a QueryModel and return as a list
+      return snapshot.docs
+          .map((doc) => QueryModel.fromDocumentSnapshot(doc))
+          .toList();
+    } catch (e) {
+      print('Error fetching queries: $e');
+      return [];
     }
   }
 }

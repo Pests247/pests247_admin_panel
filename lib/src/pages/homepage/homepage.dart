@@ -1,11 +1,14 @@
 import 'package:admin_dashboard/src/gifts/all_gifts.dart';
 import 'package:admin_dashboard/src/models/user_model.dart';
 import 'package:admin_dashboard/src/pages/activity_logs/logs_screen.dart';
+import 'package:admin_dashboard/src/pages/contacts/contacts_screen.dart';
+import 'package:admin_dashboard/src/pages/faqs/faqs_screen.dart';
 import 'package:admin_dashboard/src/pages/logout/logout.dart';
 import 'package:admin_dashboard/src/pages/media/all_media.dart';
 import 'package:admin_dashboard/src/pages/premium/all_premium.dart';
 import 'package:admin_dashboard/src/pages/promotion/add_promotion_screen.dart';
 import 'package:admin_dashboard/src/pages/promotion/promotions_screen.dart';
+import 'package:admin_dashboard/src/pages/queries/queries_screen.dart';
 import 'package:admin_dashboard/src/pages/users/all_users.dart';
 import 'package:admin_dashboard/src/providers/user_provider.dart';
 import 'package:admin_dashboard/src/services/firestore_service.dart';
@@ -85,22 +88,28 @@ class _HomepageState extends State<Homepage> {
     List<String> drawerImages = [
       'assets/png/user.png',
       'assets/png/media.png',
-      'assets/png/premium.png',
-      'assets/png/gift.png',
+      // 'assets/png/premium.png',
+      // 'assets/png/gift.png',
       'assets/png/promotion.png',
       'assets/png/logs.png',
-      'assets/png/setting.png',
+      'assets/png/contact.png',
+      'assets/png/faq.png',
+      'assets/png/queries.png',
+      // 'assets/png/setting.png',
       'assets/png/logout.png',
     ];
 
     List<String> drawerTitles = [
       'Users',
       'Media',
-      'Premium',
-      'Gifts',
+      // 'Premium',
+      // 'Gifts',
       'Promotions',
       'Acitivity Logs',
-      'Setting',
+      'Contacts',
+      'FAQS',
+      'Queries',
+      // 'Setting',
       'Exit',
     ];
 
@@ -132,36 +141,51 @@ class _HomepageState extends State<Homepage> {
         });
         break;
 
+      // case 2:
+      //   setState(() {
+      //     homepageCustomWidget = const AllPremium();
+      //   });
+      //   break;
+
+      // case 3:
+      //   setState(() {
+      //     homepageCustomWidget = const AllGifts();
+      //   });
+      //   break;
+
       case 2:
-        setState(() {
-          homepageCustomWidget = const AllPremium();
-        });
-        break;
-
-      case 3:
-        setState(() {
-          homepageCustomWidget = const AllGifts();
-        });
-        break;
-
-      case 4:
         setState(() {
           floatingActionButtonTooltipString = 'Add Pormotion';
           homepageCustomWidget = const PromotionsScreen();
         });
         break;
 
-      case 5:
+      case 3:
         setState(() {
           homepageCustomWidget = const LogsScreen();
         });
         break;
-
-      case 6:
+      case 4:
         setState(() {
-          homepageCustomWidget = const SettingsScreen();
+          homepageCustomWidget = const ContactScreen();
         });
         break;
+      case 5:
+        setState(() {
+          homepageCustomWidget = const FAQScreen();
+        });
+        break;
+      case 6:
+        setState(() {
+          homepageCustomWidget = const QueriesScreen();
+        });
+        break;
+
+      // case 6:
+      //   setState(() {
+      //     homepageCustomWidget = const SettingsScreen();
+      //   });
+      //   break;
 
       case 7:
         setState(() {
