@@ -192,7 +192,6 @@ class _HomepageState extends State<Homepage> {
           homepageCustomWidget = const LogoutScreen();
         });
         break;
-
       default:
     }
 
