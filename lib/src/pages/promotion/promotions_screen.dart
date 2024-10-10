@@ -1,4 +1,5 @@
 import 'package:admin_dashboard/src/models/promotion_model.dart';
+import 'package:admin_dashboard/src/pages/promotion/add_promotion_screen.dart';
 import 'package:admin_dashboard/src/services/firestore_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -36,6 +37,27 @@ class PromotionsScreen extends StatelessWidget {
             );
           }
         },
+      ),
+      floatingActionButton: IconButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddPromotionScreen(),
+            ),
+          );
+        },
+        icon: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).primaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        tooltip: 'Add Pormotion',
       ),
     );
   }

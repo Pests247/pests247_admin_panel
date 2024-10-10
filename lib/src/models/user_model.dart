@@ -13,7 +13,7 @@ class UserModel {
   final int follow;
   final int visitors;
   final int rank;
-  final bool premium;
+  final bool isPremium;
   final String selfIntroduction;
   final int age;
   final String gender;
@@ -41,7 +41,7 @@ class UserModel {
     required this.follow,
     required this.visitors,
     required this.rank,
-    required this.premium,
+    required this.isPremium,
     required this.selfIntroduction,
     required this.age,
     required this.gender,
@@ -70,7 +70,7 @@ class UserModel {
       'follow': follow,
       'visitors': visitors,
       'rank': rank,
-      'premium': premium,
+      'premium': isPremium,
       'selfIntroduction': selfIntroduction,
       'age': age,
       'gender': gender,
@@ -101,7 +101,7 @@ class UserModel {
       follow: json['follow'] ?? 0,
       visitors: json['visitors'] ?? 0,
       rank: json['rank'] ?? 0,
-      premium: json['premium'] ?? false,
+      isPremium: json['premium'] ?? false,
       selfIntroduction: json['selfIntroduction'] ?? '',
       age: json['age'] ?? 0,
       gender: json['gender'] ?? '',
@@ -132,7 +132,7 @@ class UserModel {
       follow: map['follow'] ?? 0,
       visitors: map['visitors'] ?? 0,
       rank: map['rank'] ?? 0,
-      premium: map['premium'] ?? false,
+      isPremium: map['premium'] ?? false,
       selfIntroduction: map['selfIntroduction'] ?? '',
       age: map['age'] ?? 0,
       gender: map['gender'] ?? '',

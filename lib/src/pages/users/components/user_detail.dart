@@ -38,7 +38,7 @@ class UserDetailState extends State<UserDetail> {
     super.initState();
     // Set initial values
     _selectedAccountStatus = widget.user.accountStatus;
-    _selectedPremiumStatus = widget.user.premium ? 'Yes' : 'No';
+    _selectedPremiumStatus = widget.user.isPremium ? 'Yes' : 'No';
     _elCoinsController.text = '${widget.user.elCoins}';
     _elFragsController.text = '${widget.user.elFrags}';
     _rankPointsController.text = '${widget.user.rankPoints}';
@@ -333,7 +333,7 @@ class UserDetailState extends State<UserDetail> {
             elFrags: int.tryParse(_elFragsController.text) ?? 0,
             rankPoints: int.tryParse(_rankPointsController.text) ?? 0,
             rank: int.tryParse(_rankController.text) ?? 0,
-            premium: _selectedPremiumStatus == 'Yes',
+            isPremium: _selectedPremiumStatus == 'Yes',
             accountStatus: _selectedAccountStatus,
             // Add other fields as necessary
           );
@@ -353,7 +353,7 @@ class UserDetailState extends State<UserDetail> {
         .collection('users')
         .doc(updatedUser.uid)
         .update({
-      'premium': updatedUser.premium,
+      'isPremium': updatedUser.isPremium,
       'elCoins': updatedUser.elCoins,
       'elFrags': updatedUser.elFrags,
       'rankPoints': updatedUser.rankPoints,

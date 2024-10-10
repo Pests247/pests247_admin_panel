@@ -3,6 +3,7 @@ import 'package:admin_dashboard/src/models/moments/activity_log_model.dart';
 import 'package:admin_dashboard/src/models/moments/moment_model.dart';
 import 'package:admin_dashboard/src/models/promotion_model.dart';
 import 'package:admin_dashboard/src/models/query_model.dart';
+import 'package:admin_dashboard/src/models/rank_model.dart';
 import 'package:admin_dashboard/src/models/room_model.dart';
 import 'package:admin_dashboard/src/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -284,28 +285,34 @@ class FirestoreService {
     print('Fetching all logs from all users');
 
     try {
-      final userDocs =
+      // Fetching all documents from the 'activityLogs' collection
+      final logDocs =
           await FirebaseFirestore.instance.collection('activityLogs').get();
 
-      // Check if userDocs is empty
-      if (userDocs.docs.isEmpty) {
+      // Check if logDocs is empty
+      if (logDocs.docs.isEmpty) {
         print('No user documents found in activityLogs');
         return allLogs; // Return empty list if no user documents
       }
 
-      // Create a batch for more efficient reads
-      for (var userDoc in userDocs.docs) {
+      // Iterate through each document in the 'activityLogs' collection
+      for (var logDoc in logDocs.docs) {
+        // Fetch logs for each user
         final userLogsSnapshot = await FirebaseFirestore.instance
             .collection('activityLogs')
-            .doc(userDoc.id)
+            .doc(logDoc.id)
             .collection('logs')
             .get();
 
         // Ensure userLogsSnapshot is not empty
-        allLogs.addAll(userLogsSnapshot.docs
-            .map((logDoc) => ActivityLog.fromMap(logDoc.data())));
-        print(
-            'Fetched logs for userDoc (email): ${userDoc.id}, logs: ${userLogsSnapshot.docs.length}');
+        if (userLogsSnapshot.docs.isNotEmpty) {
+          allLogs.addAll(userLogsSnapshot.docs
+              .map((logDoc) => ActivityLog.fromMap(logDoc.data())));
+          print(
+              'Fetched logs for userDoc (email): ${logDoc.id}, logs: ${userLogsSnapshot.docs.length}');
+        } else {
+          print('No logs found for userDoc (email): ${logDoc.id}');
+        }
       }
 
       print('Total logs fetched: ${allLogs.length}');
@@ -490,6 +497,50 @@ class FirestoreService {
     } catch (e) {
       print('Error fetching queries: $e');
       return [];
+    }
+  }
+
+  // Ranks
+  final CollectionReference _rankCollection =
+      FirebaseFirestore.instance.collection('ranks');
+  // Add a new rank to Firestore
+  Future<void> addRank(RankModel rank) async {
+    try {
+      await _rankCollection.doc(rank.id).set(rank.toMap());
+    } catch (e) {
+      print('Error adding rank: $e');
+      rethrow;
+    }
+  }
+
+  // Fetch all ranks from Firestore
+  Future<List<RankModel>> fetchRanks() async {
+    try {
+      QuerySnapshot querySnapshot = await _rankCollection.get();
+      return querySnapshot.docs
+          .map((doc) => RankModel.fromDocumentSnapshot(doc))
+          .toList();
+    } catch (e) {
+      print('Error fetching ranks: $e');
+      rethrow;
+    }
+  }
+
+  // Delete a rank from Firestore by id and its image from Storage
+  Future<void> deleteRank(String id) async {
+    try {
+      // Delete the rank's image from Firebase Storage
+      final storageRef =
+          FirebaseStorage.instance.ref().child('rank_badges/$id.jpg');
+      await storageRef.delete();
+
+      // Then delete the rank document from Firestore
+      await _rankCollection.doc(id).delete();
+
+      print('Rank deleted successfully.');
+    } catch (e) {
+      print('Error deleting rank or image: $e');
+      rethrow;
     }
   }
 }

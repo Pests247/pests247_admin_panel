@@ -1,18 +1,15 @@
-import 'package:admin_dashboard/src/gifts/all_gifts.dart';
 import 'package:admin_dashboard/src/models/user_model.dart';
 import 'package:admin_dashboard/src/pages/activity_logs/logs_screen.dart';
 import 'package:admin_dashboard/src/pages/contacts/contacts_screen.dart';
 import 'package:admin_dashboard/src/pages/faqs/faqs_screen.dart';
 import 'package:admin_dashboard/src/pages/logout/logout.dart';
 import 'package:admin_dashboard/src/pages/media/all_media.dart';
-import 'package:admin_dashboard/src/pages/premium/all_premium.dart';
-import 'package:admin_dashboard/src/pages/promotion/add_promotion_screen.dart';
 import 'package:admin_dashboard/src/pages/promotion/promotions_screen.dart';
 import 'package:admin_dashboard/src/pages/queries/queries_screen.dart';
+import 'package:admin_dashboard/src/pages/ranks/ranks_screen.dart';
 import 'package:admin_dashboard/src/pages/users/all_users.dart';
 import 'package:admin_dashboard/src/providers/user_provider.dart';
 import 'package:admin_dashboard/src/services/firestore_service.dart';
-import 'package:admin_dashboard/src/pages/settings/setings.dart';
 import 'package:admin_dashboard/src/utility/color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +27,6 @@ class _HomepageState extends State<Homepage> {
   bool isExpanded = false;
   int? _selectedIndex;
   double textSize = 40.0;
-  String? floatingActionButtonTooltipString;
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -91,6 +87,7 @@ class _HomepageState extends State<Homepage> {
       // 'assets/png/premium.png',
       // 'assets/png/gift.png',
       'assets/png/promotion.png',
+      'assets/png/rank.png',
       'assets/png/logs.png',
       'assets/png/contact.png',
       'assets/png/faq.png',
@@ -105,10 +102,11 @@ class _HomepageState extends State<Homepage> {
       // 'Premium',
       // 'Gifts',
       'Promotions',
+      'Ranks',
       'Acitivity Logs',
-      'Contacts',
       'FAQS',
       'Queries',
+      'Admin Contact',
       // 'Setting',
       'Exit',
     ];
@@ -155,21 +153,22 @@ class _HomepageState extends State<Homepage> {
 
       case 2:
         setState(() {
-          floatingActionButtonTooltipString = 'Add Pormotion';
           homepageCustomWidget = const PromotionsScreen();
         });
         break;
 
       case 3:
         setState(() {
+          homepageCustomWidget = const RanksScreen();
+        });
+        break;
+
+      case 4:
+        setState(() {
           homepageCustomWidget = const LogsScreen();
         });
         break;
-      case 4:
-        setState(() {
-          homepageCustomWidget = const ContactScreen();
-        });
-        break;
+
       case 5:
         setState(() {
           homepageCustomWidget = const FAQScreen();
@@ -180,6 +179,11 @@ class _HomepageState extends State<Homepage> {
           homepageCustomWidget = const QueriesScreen();
         });
         break;
+      case 7:
+        setState(() {
+          homepageCustomWidget = const ContactScreen();
+        });
+        break;
 
       // case 6:
       //   setState(() {
@@ -187,7 +191,7 @@ class _HomepageState extends State<Homepage> {
       //   });
       //   break;
 
-      case 7:
+      case 8:
         setState(() {
           homepageCustomWidget = const LogoutScreen();
         });
@@ -196,31 +200,6 @@ class _HomepageState extends State<Homepage> {
     }
 
     return Scaffold(
-      floatingActionButton: _selectedIndex == 2
-          ? IconButton(
-              onPressed: () async {
-                if (_selectedIndex == 2) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AddPromotionScreen(),
-                    ),
-                  );
-                }
-              },
-              icon: const Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-              tooltip: floatingActionButtonTooltipString,
-            )
-          : Container(),
       body: Row(
         children: [
           AnimatedContainer(

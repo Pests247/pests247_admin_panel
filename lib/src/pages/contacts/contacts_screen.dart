@@ -69,7 +69,7 @@ class ContactScreenState extends State<ContactScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contact Info'),
+        title: const Text('Admin Contact Info'),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
