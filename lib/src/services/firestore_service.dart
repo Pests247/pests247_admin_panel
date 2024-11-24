@@ -543,4 +543,40 @@ class FirestoreService {
       rethrow;
     }
   }
+
+  final CollectionReference audioBackgroundCollection =
+      FirebaseFirestore.instance.collection('audioBackground');
+
+  // Method to create a new audioBackground document
+  Future<void> createAudioBackground({
+    required String id,
+    required List<String> owners,
+    required double price,
+    required String url,
+  }) async {
+    try {
+      await audioBackgroundCollection.doc(id).set({
+        'id': id,
+        'owners': owners,
+        'price': price,
+        'url': url,
+      });
+      print("Audio background added successfully!");
+    } catch (e) {
+      print("Failed to add audio background: $e");
+    }
+  }
+
+  // Method to fetch all audioBackground documents
+  Future<List<Map<String, dynamic>>> fetchAudioBackgrounds() async {
+    try {
+      QuerySnapshot querySnapshot = await audioBackgroundCollection.get();
+      return querySnapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
+    } catch (e) {
+      print("Failed to fetch audio backgrounds: $e");
+      return [];
+    }
+  }
 }
