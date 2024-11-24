@@ -2,10 +2,35 @@ import 'package:admin_dashboard/src/models/user_model.dart';
 import 'package:admin_dashboard/src/pages/users/components/user_detail.dart';
 import 'package:flutter/material.dart';
 
-class AllUsers extends StatelessWidget {
+class AllUsers extends StatefulWidget {
   const AllUsers({super.key, required this.users});
 
   final List<UserModel> users;
+
+  @override
+  _AllUsersState createState() => _AllUsersState();
+}
+
+class _AllUsersState extends State<AllUsers> {
+  TextEditingController searchController = TextEditingController();
+  List<UserModel> filteredUsers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    filteredUsers = widget.users; // Initialize with all users
+  }
+
+  // Method to filter users by username
+  void _filterUsers(String query) {
+    final results = widget.users.where((user) {
+      return user.userName.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+
+    setState(() {
+      filteredUsers = results;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +39,25 @@ class AllUsers extends StatelessWidget {
       width: double.maxFinite,
       child: Column(
         children: [
+          // Search Field
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                labelText: 'Search by Username',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onChanged: (value) {
+                _filterUsers(value); // Call filter method on every change
+              },
+            ),
+          ),
+          const SizedBox(height: 10),
+
           // Header Row
           Padding(
             padding: const EdgeInsets.all(10.0),
@@ -35,9 +79,9 @@ class AllUsers extends StatelessWidget {
           // User List
           Expanded(
             child: ListView.builder(
-              itemCount: users.length,
+              itemCount: filteredUsers.length,
               itemBuilder: (context, index) {
-                final user = users[index];
+                final user = filteredUsers[index];
                 return MouseRegion(
                   cursor: SystemMouseCursors.click, // Change cursor on hover
                   child: GestureDetector(
