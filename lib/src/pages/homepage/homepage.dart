@@ -1,5 +1,6 @@
 import 'package:admin_dashboard/src/models/user_model.dart';
 import 'package:admin_dashboard/src/pages/activity_logs/logs_screen.dart';
+import 'package:admin_dashboard/src/pages/audio_background/audio_background.dart';
 import 'package:admin_dashboard/src/pages/contacts/contacts_screen.dart';
 import 'package:admin_dashboard/src/pages/faqs/faqs_screen.dart';
 import 'package:admin_dashboard/src/pages/logout/logout.dart';
@@ -87,6 +88,7 @@ class _HomepageState extends State<Homepage> {
       // 'assets/png/premium.png',
       // 'assets/png/gift.png',
       'assets/png/promotion.png',
+      'assets/png/background.png',
       'assets/png/rank.png',
       'assets/png/logs.png',
       'assets/png/contact.png',
@@ -102,6 +104,7 @@ class _HomepageState extends State<Homepage> {
       // 'Premium',
       // 'Gifts',
       'Promotions',
+      'Audio Backgrounds',
       'Ranks',
       'Acitivity Logs',
       'FAQS',
@@ -159,27 +162,33 @@ class _HomepageState extends State<Homepage> {
 
       case 3:
         setState(() {
-          homepageCustomWidget = const RanksScreen();
+          homepageCustomWidget = const AudioBackground();
         });
         break;
 
       case 4:
         setState(() {
-          homepageCustomWidget = const LogsScreen();
+          homepageCustomWidget = const RanksScreen();
         });
         break;
 
       case 5:
         setState(() {
+          homepageCustomWidget = const LogsScreen();
+        });
+        break;
+
+      case 6:
+        setState(() {
           homepageCustomWidget = const FAQScreen();
         });
         break;
-      case 6:
+      case 7:
         setState(() {
           homepageCustomWidget = const QueriesScreen();
         });
         break;
-      case 7:
+      case 8:
         setState(() {
           homepageCustomWidget = const ContactScreen();
         });
@@ -191,7 +200,7 @@ class _HomepageState extends State<Homepage> {
       //   });
       //   break;
 
-      case 8:
+      case 9:
         setState(() {
           homepageCustomWidget = const LogoutScreen();
         });
