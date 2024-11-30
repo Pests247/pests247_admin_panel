@@ -15,6 +15,10 @@ class LogsScreenState extends State<LogsScreen> {
   @override
   void initState() {
     super.initState();
+    fetchLogs();
+  }
+
+  fetchLogs() async {
     _logsFuture = FirestoreService().fetchAllLogs();
   }
 

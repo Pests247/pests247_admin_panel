@@ -298,11 +298,8 @@ class FirestoreService {
       // Iterate through each document in the 'activityLogs' collection
       for (var logDoc in logDocs.docs) {
         // Fetch logs for each user
-        final userLogsSnapshot = await FirebaseFirestore.instance
-            .collection('activityLogs')
-            .doc(logDoc.id)
-            .collection('logs')
-            .get();
+        final userLogsSnapshot =
+            await FirebaseFirestore.instance.collection('activityLogs').get();
 
         // Ensure userLogsSnapshot is not empty
         if (userLogsSnapshot.docs.isNotEmpty) {
