@@ -26,7 +26,7 @@ class ActivityLog {
       'action': action,
       'details': details,
       'userId': userId,
-      'timestamp': timestamp,
+      'timestamp': timestamp
     };
   }
 }
