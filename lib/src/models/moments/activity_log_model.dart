@@ -17,7 +17,7 @@ class ActivityLog {
       action: map['action'],
       userId: map['userId'],
       details: map['details'] ?? 'No Details',
-      timestamp: map['timestamp']
+      timestamp: map['timestamp'],
     );
   }
 
