@@ -9,6 +9,7 @@ import 'package:admin_dashboard/src/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 
@@ -575,6 +576,20 @@ class FirestoreService {
     } catch (e) {
       print("Failed to fetch audio backgrounds: $e");
       return [];
+    }
+  }
+
+  // Fetch user details by ID
+  Future<Map<String, dynamic>?> fetchUserById(String userId) async {
+    try {
+      final docSnapshot = await _db.collection('users').doc(userId).get();
+      if (docSnapshot.exists) {
+        return docSnapshot.data();
+      }
+      return null;
+    } catch (e) {
+      debugPrint("Error fetching user by ID: $e");
+      return null;
     }
   }
 }

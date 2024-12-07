@@ -1,7 +1,8 @@
 import 'package:admin_dashboard/src/pages/audio_background/add_audio_background.dart';
+import 'package:admin_dashboard/src/pages/audio_background/audio_bg_detail.dart';
+import 'package:admin_dashboard/src/services/firestore_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:admin_dashboard/src/services/firestore_service.dart';
 
 class AudioBackground extends StatefulWidget {
   const AudioBackground({super.key});
@@ -11,13 +12,26 @@ class AudioBackground extends StatefulWidget {
 }
 
 class AudioBackgroundState extends State<AudioBackground> {
-  /// Function to fix Google Drive URLs for direct access
-  String fixGoogleDriveUrl(String url) {
-    if (url.contains("drive.google.com") &&
-        url.contains("uc?export=view&id=")) {
-      return url.replaceAll("uc?export=view", "uc?export=download");
+  /// Fix Google Drive URLs for direct access
+  // String fixGoogleDriveUrl(String url) {
+  //   if (url.contains("drive.google.com") &&
+  //       url.contains("uc?export=view&id=")) {
+  //     return url.replaceAll("uc?export=view", "uc?export=download");
+  //   }
+  //   return url;
+  // }
+
+  /// Fetch user details by owner IDs
+  Future<List<Map<String, dynamic>>> fetchUserDetails(
+      List<String> ownerIds) async {
+    List<Map<String, dynamic>> userDetails = [];
+    for (String userId in ownerIds) {
+      final user = await FirestoreService().fetchUserById(userId);
+      if (user != null) {
+        userDetails.add(user);
+      }
     }
-    return url;
+    return userDetails;
   }
 
   @override
@@ -36,57 +50,89 @@ class AudioBackgroundState extends State<AudioBackground> {
 
           final audioBackgrounds = snapshot.data!;
 
-          return ListView.builder(
+          return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              childAspectRatio: 3 / 4,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+            ),
+            padding: const EdgeInsets.all(16),
             itemCount: audioBackgrounds.length,
             itemBuilder: (context, index) {
               final background = audioBackgrounds[index];
-              final fixedUrl = fixGoogleDriveUrl(background['url']);
-              print("Loading image from URL: $fixedUrl");
+              // final fixedUrl = fixGoogleDriveUrl(background['url']);
+              final fixedUrl = background['url'];
+              final ownerIds = List<String>.from(background['owners']);
 
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 4,
-                child: ListTile(
-                  leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: CachedNetworkImage(
-                      imageUrl: fixedUrl,
-                      placeholder: (context, url) =>
-                          const CircularProgressIndicator(), // Placeholder while loading
-                      errorWidget: (context, url, error) {
-                        print(
-                            "Error loading image from URL: $url, Error: $error");
-                        return const Icon(Icons.broken_image, size: 50);
-                      },
-                      width: 60,
-                      height: 60,
-                      fit: BoxFit.cover,
-                    ),
+              return GestureDetector(
+                onTap: () async {
+                  final ownerDetails = await fetchUserDetails(ownerIds);
+                  if (context.mounted) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AudioBackgroundDetail(
+                          background: background,
+                          ownerDetails: ownerDetails,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  title: Text(
-                    "Price: \$${background['price'].toStringAsFixed(2)}",
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  elevation: 4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(12),
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: fixedUrl,
+                          height: 150,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) =>
+                              const Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) => const Icon(
+                            Icons.broken_image,
+                            size: 50,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Price: \$${background['price'].toStringAsFixed(2)}",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          "Owners: ${ownerIds.length}",
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  subtitle: Text(
-                    "Owners: ${background['owners'].isNotEmpty ? background['owners'].join(', ') : 'None'}",
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content:
-                          Text("Selected Background ID: ${background['id']}"),
-                    ));
-                  },
                 ),
               );
             },
           );
         },
       ),
-      floatingActionButton: IconButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
@@ -95,17 +141,7 @@ class AudioBackgroundState extends State<AudioBackground> {
             ),
           );
         },
-        icon: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
-        tooltip: 'Add Background',
+        child: const Icon(Icons.add),
       ),
     );
   }
