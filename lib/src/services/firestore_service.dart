@@ -140,14 +140,15 @@ class FirestoreService {
       final db = FirebaseFirestore.instance;
       var id = const Uuid().v4();
       RoomModel room = RoomModel(
-          title: title,
-          roomType: type,
-          tag: tag,
-          createdBy: createdBy,
-          participants: participants,
-          videoId: videoId,
-          roomID: id,
-          views: 0);
+        title: title,
+        roomType: type,
+        tag: tag,
+        createdBy: createdBy,
+        participants: participants,
+        videoId: videoId,
+        roomID: id,
+        views: 0,
+      );
       await db.collection('room').doc(id).set(room.toJson());
     } catch (e) {
       print(e.toString());

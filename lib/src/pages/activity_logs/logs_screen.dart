@@ -1,5 +1,7 @@
+import 'package:admin_dashboard/src/models/user_model.dart';
+import 'package:admin_dashboard/src/pages/activity_logs/logs_detail_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:admin_dashboard/src/services/firestore_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:admin_dashboard/src/models/moments/activity_log_model.dart';
 
 class LogsScreen extends StatefulWidget {
@@ -10,16 +12,40 @@ class LogsScreen extends StatefulWidget {
 }
 
 class LogsScreenState extends State<LogsScreen> {
-  late Future<List<ActivityLog>> _logsFuture;
+  late Future<Map<UserModel, List<ActivityLog>>> _logsFuture;
 
   @override
   void initState() {
     super.initState();
-    fetchLogs();
+    _logsFuture = fetchLogs();
   }
 
-  fetchLogs() async {
-    _logsFuture = FirestoreService().fetchAllLogs();
+  Future<Map<UserModel, List<ActivityLog>>> fetchLogs() async {
+    final logsSnapshot = await FirebaseFirestore.instance
+        .collection('activityLogs')
+        .orderBy('timestamp', descending: true)
+        .get();
+
+    final usersSnapshot =
+        await FirebaseFirestore.instance.collection('users').get();
+
+    // Map userId to UserModel
+    final usersMap = {
+      for (var doc in usersSnapshot.docs) doc.id: UserModel.fromMap(doc.data()),
+    };
+
+    // Group logs by userId
+    final Map<UserModel, List<ActivityLog>> groupedLogs = {};
+    for (var doc in logsSnapshot.docs) {
+      final log = ActivityLog.fromMap(doc.data());
+      final user = usersMap[log.userId];
+
+      if (user != null) {
+        groupedLogs.putIfAbsent(user, () => []).add(log);
+      }
+    }
+
+    return groupedLogs;
   }
 
   @override
@@ -27,7 +53,7 @@ class LogsScreenState extends State<LogsScreen> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: FutureBuilder<List<ActivityLog>>(
+        child: FutureBuilder<Map<UserModel, List<ActivityLog>>>(
           future: _logsFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -41,25 +67,72 @@ class LogsScreenState extends State<LogsScreen> {
                 child: Text('No logs available'),
               );
             } else {
-              final logs = snapshot.data!;
+              final groupedLogs = snapshot.data!;
 
-              return SingleChildScrollView(
-                child: DataTable(
-                  columns: const [
-                    DataColumn(label: Text('Action')),
-                    DataColumn(label: Text('Details')),
-                    DataColumn(label: Text('Timestamp')),
-                  ],
-                  rows: logs.map((log) {
-                    return DataRow(
-                      cells: [
-                        DataCell(Text(log.action)),
-                        DataCell(Text(log.details)),
-                        DataCell(Text(log.timestamp.toDate().toString())),
-                      ],
-                    );
-                  }).toList(),
+              return GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 5,
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                  childAspectRatio: 14 / 10,
                 ),
+                itemCount: groupedLogs.keys.length,
+                itemBuilder: (context, index) {
+                  final user = groupedLogs.keys.elementAt(index);
+                  final logs = groupedLogs[user]!;
+
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              LogsDetailsScreen(user: user, logs: logs),
+                        ),
+                      );
+                    },
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              backgroundImage: user.profilePicUrl != null
+                                  ? NetworkImage(user.profilePicUrl!)
+                                  : null,
+                              radius: 40,
+                              child: user.profilePicUrl == null
+                                  ? const Icon(Icons.person, size: 40)
+                                  : null,
+                            ),
+                            const SizedBox(height: 8.0),
+                            Text(
+                              user.userName,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4.0),
+                            Text(
+                              user.email,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
               );
             }
           },
