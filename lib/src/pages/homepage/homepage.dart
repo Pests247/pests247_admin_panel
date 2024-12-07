@@ -87,6 +87,7 @@ class _HomepageState extends State<Homepage> {
       'assets/png/media.png',
       // 'assets/png/premium.png',
       // 'assets/png/gift.png',
+      'assets/png/gif.png',
       'assets/png/promotion.png',
       'assets/png/background.png',
       'assets/png/rank.png',
@@ -103,6 +104,7 @@ class _HomepageState extends State<Homepage> {
       'Media',
       // 'Premium',
       // 'Gifts',
+      'GIF',
       'Promotions',
       'Audio Backgrounds',
       'Ranks',
@@ -159,36 +161,41 @@ class _HomepageState extends State<Homepage> {
           homepageCustomWidget = const PromotionsScreen();
         });
         break;
-
       case 3:
         setState(() {
-          homepageCustomWidget = const AudioBackground();
+          homepageCustomWidget = const PromotionsScreen();
         });
         break;
 
       case 4:
         setState(() {
-          homepageCustomWidget = const RanksScreen();
+          homepageCustomWidget = const AudioBackground();
         });
         break;
 
       case 5:
         setState(() {
-          homepageCustomWidget = const LogsScreen();
+          homepageCustomWidget = const RanksScreen();
         });
         break;
 
       case 6:
         setState(() {
+          homepageCustomWidget = const LogsScreen();
+        });
+        break;
+
+      case 7:
+        setState(() {
           homepageCustomWidget = const FAQScreen();
         });
         break;
-      case 7:
+      case 8:
         setState(() {
           homepageCustomWidget = const QueriesScreen();
         });
         break;
-      case 8:
+      case 9:
         setState(() {
           homepageCustomWidget = const ContactScreen();
         });
@@ -200,11 +207,12 @@ class _HomepageState extends State<Homepage> {
       //   });
       //   break;
 
-      case 9:
+      case 10:
         setState(() {
           homepageCustomWidget = const LogoutScreen();
         });
         break;
+
       default:
     }
 
