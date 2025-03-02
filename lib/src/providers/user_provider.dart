@@ -63,17 +63,17 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  void updateProfilePic(String profilePicUrl) {
-    if (_user != null) {
-      _user!.profilePicUrl = profilePicUrl;
-      notifyListeners();
-    }
-  }
+  // void updateProfilePic(String profilePicUrl) {
+  //   if (_user != null) {
+  //     _user!.profilePicUrl = profilePicUrl;
+  //     notifyListeners();
+  //   }
+  // }
 
-  void updateCoverPic(String coverPicUrl) {
-    if (_user != null) {
-      _user!.coverPicUrl = coverPicUrl;
-      notifyListeners();
-    }
-  }
+  // void updateCoverPic(String coverPicUrl) {
+  //   if (_user != null) {
+  //     _user!.coverPicUrl = coverPicUrl;
+  //     notifyListeners();
+  //   }
+  // }
 }

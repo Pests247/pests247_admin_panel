@@ -1,13 +1,7 @@
 import 'package:admin_dashboard/src/models/user_model.dart';
-import 'package:admin_dashboard/src/pages/activity_logs/logs_screen.dart';
-import 'package:admin_dashboard/src/pages/audio_background/audio_background.dart';
 import 'package:admin_dashboard/src/pages/contacts/contacts_screen.dart';
-import 'package:admin_dashboard/src/pages/faqs/faqs_screen.dart';
+import 'package:admin_dashboard/src/pages/leads/leads.dart';
 import 'package:admin_dashboard/src/pages/logout/logout.dart';
-import 'package:admin_dashboard/src/pages/media/all_media.dart';
-import 'package:admin_dashboard/src/pages/promotion/promotions_screen.dart';
-import 'package:admin_dashboard/src/pages/queries/queries_screen.dart';
-import 'package:admin_dashboard/src/pages/ranks/ranks_screen.dart';
 import 'package:admin_dashboard/src/pages/users/all_users.dart';
 import 'package:admin_dashboard/src/providers/user_provider.dart';
 import 'package:admin_dashboard/src/services/firestore_service.dart';
@@ -16,6 +10,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+
+import '../credit_package/credit_package_screen.dart';
+import '../leads/lead_prices.dart';
+import '../new_update/new_update_screen.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -73,7 +71,7 @@ class _HomepageState extends State<Homepage> {
           ),
           SizedBox(height: height * 0.05),
           Text(
-            "Welcome to the ElTalk Admin Dashboard",
+            "Welcome to the pest247 Admin Dashboard",
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
                 fontSize: width * 0.03, fontWeight: FontWeight.bold),
@@ -84,35 +82,21 @@ class _HomepageState extends State<Homepage> {
 
     List<String> drawerImages = [
       'assets/png/user.png',
-      'assets/png/media.png',
-      // 'assets/png/premium.png',
-      // 'assets/png/gift.png',
-      'assets/png/gif.png',
       'assets/png/promotion.png',
+      'assets/png/new_update.png',
+      'assets/png/lead_prices.png',
       'assets/png/background.png',
-      'assets/png/rank.png',
-      'assets/png/logs.png',
       'assets/png/contact.png',
-      'assets/png/faq.png',
-      'assets/png/queries.png',
-      // 'assets/png/setting.png',
-      'assets/png/logout.png',
+      'assets/png/logout.png'
     ];
 
     List<String> drawerTitles = [
       'Users',
-      'Media',
-      // 'Premium',
-      // 'Gifts',
-      'GIF',
-      'Promotions',
-      'Audio Backgrounds',
-      'Ranks',
-      'Acitivity Logs',
-      'FAQS',
-      'Queries',
+      'Packages',
+      'New Updates',
+      'Lead Prices',
+      'Leads',
       'Admin Contact',
-      // 'Setting',
       'Exit',
     ];
 
@@ -140,74 +124,34 @@ class _HomepageState extends State<Homepage> {
 
       case 1:
         setState(() {
-          homepageCustomWidget = const AllMedia();
+          homepageCustomWidget = const CreditPackagesScreen();
         });
         break;
 
-      // case 2:
-      //   setState(() {
-      //     homepageCustomWidget = const AllPremium();
-      //   });
-      //   break;
-
-      // case 3:
-      //   setState(() {
-      //     homepageCustomWidget = const AllGifts();
-      //   });
-      //   break;
-
       case 2:
         setState(() {
-          homepageCustomWidget = const PromotionsScreen();
+          homepageCustomWidget = const NewUpdatesScreen();
         });
         break;
       case 3:
         setState(() {
-          homepageCustomWidget = const PromotionsScreen();
+          homepageCustomWidget = const LeadPricesScreen();
         });
         break;
 
       case 4:
         setState(() {
-          homepageCustomWidget = const AudioBackground();
+          homepageCustomWidget = const LeadsScreen();
         });
         break;
 
       case 5:
         setState(() {
-          homepageCustomWidget = const RanksScreen();
-        });
-        break;
-
-      case 6:
-        setState(() {
-          homepageCustomWidget = const LogsScreen();
-        });
-        break;
-
-      case 7:
-        setState(() {
-          homepageCustomWidget = const FAQScreen();
-        });
-        break;
-      case 8:
-        setState(() {
-          homepageCustomWidget = const QueriesScreen();
-        });
-        break;
-      case 9:
-        setState(() {
           homepageCustomWidget = const ContactScreen();
         });
         break;
 
-      // case 6:
-      //   setState(() {
-      //     homepageCustomWidget = const SettingsScreen();
-      //   });
-      //   break;
-
-      case 10:
+      case 6:
         setState(() {
           homepageCustomWidget = const LogoutScreen();
         });
@@ -340,12 +284,12 @@ class _HomepageState extends State<Homepage> {
                               ),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
+                              padding: const EdgeInsets.only(left: 10.0),
                               child: Row(
                                 children: [
                                   SizedBox(
-                                    height: width * 0.018,
-                                    width: width * 0.018,
+                                    height: width * 0.015,
+                                    width: width * 0.015,
                                     child: Image.asset(
                                       drawerImages[index],
                                       filterQuality: FilterQuality.high,
@@ -369,7 +313,7 @@ class _HomepageState extends State<Homepage> {
                                                 ? Colors.white
                                                 : Colors.black54,
                                             fontSize:
-                                                isExpanded ? width * 0.012 : 0,
+                                                isExpanded ? width * 0.0095: 0,
                                           ),
                                           child: Text(
                                             drawerTitles[index],

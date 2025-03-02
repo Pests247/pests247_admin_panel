@@ -1,369 +1,305 @@
 import 'package:flutter/material.dart';
-import 'package:admin_dashboard/src/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:admin_dashboard/src/models/user_model.dart';
+import 'dart:convert'; // Required for JSON decoding
 
-class UserDetail extends StatefulWidget {
+class UserDetailsScreen extends StatefulWidget {
   final UserModel user;
 
-  const UserDetail({super.key, required this.user});
+  const UserDetailsScreen({super.key, required this.user});
 
   @override
-  UserDetailState createState() => UserDetailState();
+  State<UserDetailsScreen> createState() => _UserDetailsScreenState();
 }
 
-class UserDetailState extends State<UserDetail> {
-  // List of possible account status values
-  final List<String> _accountStatusOptions = [
-    'active',
-    'banned',
-    'suspended',
-    'deactivated'
-  ];
-
-  // List of possible premium status values
-  final List<String> _premiumStatusOptions = ['Yes', 'No'];
-
-  // Current account and premium status values
-  late String _selectedAccountStatus;
-  late String _selectedPremiumStatus;
-
-  // Controllers for editable numeric fields
-  final TextEditingController _elCoinsController = TextEditingController();
-  final TextEditingController _elFragsController = TextEditingController();
-  final TextEditingController _rankPointsController = TextEditingController();
-  final TextEditingController _rankController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    // Set initial values
-    _selectedAccountStatus = widget.user.accountStatus;
-    _selectedPremiumStatus = widget.user.isPremium ? 'Yes' : 'No';
-    _elCoinsController.text = '${widget.user.elCoins}';
-    _elFragsController.text = '${widget.user.elFrags}';
-    _rankPointsController.text = '${widget.user.rankPoints}';
-    _rankController.text = '${widget.user.rank}';
-  }
+class _UserDetailsScreenState extends State<UserDetailsScreen> {
+  final TextEditingController _creditsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('${widget.user.userName}\'s Details'),
-      ),
+      appBar: AppBar(title: Text('${widget.user.userName} Details')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Section 1: Personal Information
             _buildSectionTitle('Personal Information'),
-            _buildInfoCard(
-              context,
-              children: [
-                _buildDetailRow('UID:', widget.user.uid),
-                _buildDetailRow('Username:', widget.user.userName),
-                _buildDetailRow('Email:', widget.user.email),
-                _buildDetailRow('Phone:', widget.user.phone),
-                _buildDetailRow('Country:', widget.user.country),
-                _buildDetailRow('Gender:', widget.user.gender),
-                _buildDetailRow('Age:', '${widget.user.age}'),
-                _buildDetailRow('Native Language:', widget.user.nativeLanguage),
-                _buildDetailRow('Preferred Languages:',
-                    widget.user.preferredLanguages.join(', ')),
-                _buildDetailRow(
-                    'Self Introduction:', widget.user.selfIntroduction),
-                _buildImageRow('Profile Picture', widget.user.profilePicUrl),
-                _buildImageRow('Cover Picture', widget.user.coverPicUrl),
-                _buildDetailRow(
-                    'Device Token:', widget.user.deviceToken ?? 'N/A'),
-              ],
-            ),
+            _buildInfoCard([
+              _buildDetailRow('UID:', widget.user.uid),
+              _buildDetailRow('Username:', widget.user.userName),
+              _buildDetailRow('Email:', widget.user.email),
+              _buildDetailRow('Phone:', widget.user.phone),
+              _buildDetailRow('Country:', widget.user.country),
+              _buildDetailRow('Account Type:', widget.user.accountType),
+              _buildDetailRow('Last Seen:', widget.user.lastSeen),
+              _buildImageRow('Profile Picture', widget.user.profilePicUrl),
+              _buildCompanyInfoRow('Company Info',widget.user.companyInfo ?? {}),
 
-            const SizedBox(height: 20), // Spacer
+            ]),
 
-            // Section 2: Account Information with Dropdowns
-            _buildSectionTitle('Account Information'),
-            _buildInfoCard(
-              context,
-              children: [
-                _buildDetailRow(
-                    'Is Admin:', widget.user.isAdmin ? 'Yes' : 'No'),
-                _buildDropdownRow('Premium Status:', _selectedPremiumStatus,
-                    _premiumStatusOptions, (String newValue) {
-                  setState(() {
-                    _selectedPremiumStatus = newValue;
-                  });
-                }),
-                _buildDetailRow(
-                    'Is Online:', widget.user.isOnline ? 'Yes' : 'No'),
-                _buildNumericInputRow('ElCoins:', _elCoinsController),
-                _buildNumericInputRow('ElFrags:', _elFragsController),
-                _buildNumericInputRow('Rank Points:', _rankPointsController),
-                _buildNumericInputRow('Rank:', _rankController),
-                _buildDropdownRow('Account Status:', _selectedAccountStatus,
-                    _accountStatusOptions, (String newValue) {
-                  setState(() {
-                    _selectedAccountStatus = newValue;
-                  });
-                }),
-                _buildUpdateButton(), // Update button
-              ],
-            ),
+            _buildSectionTitle('Financial Information'),
+            _buildInfoCard([
+              // _buildDetailRow('Card Number:', widget.user.cardNumber),
+              // _buildDetailRow('Card Expiry:', widget.user.cardExpiry),
+              _buildNumericInputRow('Credits:', _creditsController),
+              _buildListRow('Credit History:', widget.user.creditHistoryList),
+            ]),
 
-            const SizedBox(height: 20), // Spacer
-
-            // Section 3: Activity Information
             _buildSectionTitle('Activity Information'),
-            _buildInfoCard(
-              context,
-              children: [
-                _buildDetailRow('Followers:', '${widget.user.followers}'),
-                _buildDetailRow('Following:', '${widget.user.follow}'),
-                _buildDetailRow('Visitors:', '${widget.user.visitors}'),
-                _buildDetailRow(
-                    'Gift Received:', '${widget.user.giftReceived}'),
-                _buildDetailRow('Gift Sent:', '${widget.user.giftSent}'),
-              ],
-            ),
+            _buildInfoCard([
+              _buildDetailRow('Completed Services:', widget.user.completedServices?.toString() ?? '0'),
+              _buildDetailRow('Email Template:', widget.user.emailTemplate),
+              _buildDetailRow('SMS Template:', widget.user.smsTemplate),
+              _buildListRow('Lead Locations:', widget.user.leadLocations),
+              _buildListRow('Reviews:', widget.user.reviews),
+              _buildMapRow('Question & Answer Form:', widget.user.questionAnswerForm),
+            ]),
+
+            // _buildUpdateButton(),
           ],
         ),
       ),
     );
   }
 
-  // Helper function to build a section title
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Colors.blueGrey,
-        ),
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueGrey),
       ),
     );
   }
 
-  // Helper function to build an info card
-  Widget _buildInfoCard(BuildContext context,
-      {required List<Widget> children}) {
+  Widget _buildInfoCard(List<Widget> children) {
     return Card(
       elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: children,
-        ),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: children),
       ),
     );
   }
 
-  // Helper function to build a detailed row with title and value
-  Widget _buildDetailRow(String title, String value) {
+  Widget _buildCompanyInfoRow(String title, Map<String, dynamic>? companyInfo) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+          const SizedBox(height: 8),
+
+          // Check if companyInfo is null or empty
+          if (companyInfo == null || companyInfo.isEmpty)
+            const Text('No company information available', style: TextStyle(color: Colors.redAccent))
+          else
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildInfoItem("🏢 Company Name:", companyInfo["name"]),
+                _buildInfoItem("📍 Location:", companyInfo["location"]),
+                _buildInfoItem("📧 Email:", companyInfo["emailAddress"]),
+                _buildInfoItem("📞 Phone:", companyInfo["phoneNumber"]),
+                _buildInfoItem("🌐 Website:", companyInfo["website"]),
+                _buildInfoItem("👥 Company Size:", companyInfo["size"]),
+                _buildInfoItem("🎯 Experience:", companyInfo["experience"]),
+                _buildInfoItem("📝 Description:", companyInfo["description"]),
+
+                if (companyInfo["logo"] != null && companyInfo["logo"].isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 8),
+                      const Text("📌 Company Logo:", style: TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 5),
+                      Image.network(companyInfo["logo"], height: 80, width: 80, fit: BoxFit.cover),
+                    ],
+                  ),
+              ],
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            flex: 5,
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 16),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
         ],
       ),
     );
   }
 
-  // Helper function to build a row with an image if URL is provided
+
+  Widget _buildInfoItem(String label, String? value) {
+    return value != null && value.isNotEmpty
+        ? Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Text(value, style: const TextStyle(color: Colors.black87)),
+        ],
+      ),
+    )
+        : const SizedBox.shrink(); // Hide if no value is present
+  }
+
+
+
+  Widget _buildDetailRow(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Expanded(flex: 2, child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(flex: 5, child: Text(value, overflow: TextOverflow.visible)),
+        ],
+      ),
+    );
+  }
+
   Widget _buildImageRow(String title, String? imageUrl) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '$title:',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
           imageUrl != null && imageUrl.isNotEmpty
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    imageUrl,
-                    height: 150,
-                    width: 150,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => const Icon(
-                      Icons.broken_image,
-                      color: Colors.red,
-                      size: 50,
-                    ),
-                  ),
-                )
-              : const Text(
-                  'No image available',
-                  style: TextStyle(fontSize: 16, color: Colors.redAccent),
-                ),
+              ? Image.network(imageUrl, height: 100, width: 100, fit: BoxFit.cover)
+              : const Text('No image available', style: TextStyle(color: Colors.redAccent)),
         ],
       ),
     );
   }
 
-  // Helper function to build a dropdown row for selection
-  Widget _buildDropdownRow(String title, String currentValue,
-      List<String> options, Function(String) onChanged) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            flex: 5,
-            child: DropdownButton<String>(
-              value: currentValue,
-              isExpanded: true,
-              items: options.map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                if (newValue != null) {
-                  onChanged(newValue);
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Helper function to build an editable numeric input row
   Widget _buildNumericInputRow(String title, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-          ),
-          const SizedBox(width: 10),
+          Expanded(flex: 2, child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold))),
           Expanded(
             flex: 5,
-            child: TextField(
-              controller: controller,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Enter a number',
-              ),
-              onChanged: (value) {
-                // Optionally, you can add validation here
-              },
-            ),
+            child: Text(widget.user.credits.toString()),
           ),
         ],
       ),
     );
   }
 
-  // Helper function to build the update button
-  Widget _buildUpdateButton() {
+  Widget _buildListRow(String title, List<dynamic> items) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: ElevatedButton(
-        onPressed: () async {
-          // Prepare data for update
-          final updatedUser = UserModel(
-            isOnline: widget.user.isOnline,
-            visitors: widget.user.visitors,
-            follow: widget.user.follow,
-            followers: widget.user.followers,
-            giftReceived: widget.user.giftReceived,
-            giftSent: widget.user.giftSent,
-            uid: widget.user.uid,
-            userName: widget.user.userName,
-            email: widget.user.email,
-            phone: widget.user.phone,
-            country: widget.user.country,
-            gender: widget.user.gender,
-            age: widget.user.age,
-            nativeLanguage: widget.user.nativeLanguage,
-            preferredLanguages: widget.user.preferredLanguages,
-            selfIntroduction: widget.user.selfIntroduction,
-            profilePicUrl: widget.user.profilePicUrl,
-            coverPicUrl: widget.user.coverPicUrl,
-            deviceToken: widget.user.deviceToken,
-            isAdmin: widget.user.isAdmin,
-            elCoins: int.tryParse(_elCoinsController.text) ?? 0,
-            elFrags: int.tryParse(_elFragsController.text) ?? 0,
-            rankPoints: int.tryParse(_rankPointsController.text) ?? 0,
-            rank: int.tryParse(_rankController.text) ?? 0,
-            isPremium: _selectedPremiumStatus == 'Yes',
-            accountStatus: _selectedAccountStatus,
-            // Add other fields as necessary
-          );
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+          const SizedBox(height: 8),
+          items.isNotEmpty
+              ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: items.map((item) {
+              String location = item['location'] ?? 'Unknown Location';
+              String postalCode = item['postalCode'] ?? 'N/A';
+              String miles = item['miles'] ?? 'N/A';
+              String driveTime = item['driveTime'] ?? 'N/A';
 
-          // Call update function here (make sure to implement it)
-          await _updateUserDetails(updatedUser);
-        },
-        child: const Text('Update User Details'),
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("📍 Location: $location", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    const SizedBox(height: 4),
+                    Text("📌 Postal Code: $postalCode", style: const TextStyle(color: Colors.black87)),
+                    if (miles != 'N/A') Text("🛣 Miles: $miles", style: const TextStyle(color: Colors.black87)),
+                    if (driveTime != 'N/A') Text("⏳ Drive Time: $driveTime", style: const TextStyle(color: Colors.black87)),
+                    const Divider(), // Adds a separator between locations
+                  ],
+                ),
+              );
+            }).toList(),
+          )
+              : const Text('No data available', style: TextStyle(color: Colors.redAccent)),
+        ],
       ),
     );
   }
 
-  // Placeholder for the function to update user details in the database
-  Future<void> _updateUserDetails(UserModel updatedUser) async {
-    // Implement your update logic here, e.g., update Firestore or any database
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(updatedUser.uid)
-        .update({
-      'isPremium': updatedUser.isPremium,
-      'elCoins': updatedUser.elCoins,
-      'elFrags': updatedUser.elFrags,
-      'rankPoints': updatedUser.rankPoints,
-      'rank': updatedUser.rank,
-      'accountStatus': updatedUser.accountStatus,
+
+  Widget _buildMapRow(String title, Map<String, dynamic> data) {
+    // Separate questions and answers
+    List<MapEntry<String, dynamic>> questions = [];
+    List<MapEntry<String, dynamic>> answers = [];
+
+    data.entries.forEach((entry) {
+      if (entry.key.startsWith('question')) {
+        questions.add(entry);
+      } else if (entry.key.startsWith('answer')) {
+        answers.add(entry);
+      }
     });
 
-    // Show a message after updating
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('User details updated successfully!')),
+    // Sort questions and answers separately based on number
+    questions.sort((a, b) => a.key.compareTo(b.key));
+    answers.sort((a, b) => a.key.compareTo(b.key));
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          questions.isNotEmpty
+              ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(questions.length, (index) {
+              String questionText = questions[index].value.toString();
+              String answerText = (index < answers.length) ? answers[index].value.toString() : "No answer provided";
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Question No ${index + 1}",
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+                    const SizedBox(height: 4),
+                    Text(questionText, style: const TextStyle(fontWeight: FontWeight.bold)), // Question
+                    const SizedBox(height: 4),
+                    Text(answerText, style: const TextStyle(color: Colors.black87)), // Answer
+                  ],
+                ),
+              );
+            }),
+          )
+              : const Text('No data available', style: TextStyle(color: Colors.redAccent)),
+        ],
+      ),
     );
   }
+
+
+
+
+
+  // Widget _buildUpdateButton() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 16.0),
+  //     child: ElevatedButton(
+  //       onPressed: () async {
+  //         int updatedCredits = int.tryParse(_creditsController.text) ?? widget.user.credits;
+  //
+  //         await FirebaseFirestore.instance.collection('users').doc(widget.user.uid).update({
+  //           'credits': updatedCredits,
+  //         });
+  //
+  //         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('User details updated successfully!')));
+  //       },
+  //       child: const Text('Update User Details'),
+  //     ),
+  //   );
+  // }
 }

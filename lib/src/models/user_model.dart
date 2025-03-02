@@ -1,150 +1,105 @@
+import 'dart:convert';
+
 class UserModel {
-  final String uid;
-  final String? deviceToken;
-  final String userName;
-  final String email;
-  final bool isAdmin;
-  String? profilePicUrl;
-  String? coverPicUrl;
-  final String nativeLanguage;
-  final List<String> preferredLanguages;
+  final String accountType;
+  final String cardExpiry;
+  final String cardNumber;
+  final Map<String, dynamic>? companyInfo;
+  final int? completedServices;
   final String country;
-  final int followers;
-  final int follow;
-  final int visitors;
-  final int rank;
-  final bool isPremium;
-  final String selfIntroduction;
-  final int age;
-  final String gender;
-  final bool isOnline;
-  final int giftReceived;
-  final int giftSent;
+  final List<dynamic> creditHistoryList;
+  final int credits;
+  final String deviceToken;
+  final String email;
+  final String emailTemplate;
+  final String lastSeen;
+  final List<dynamic> leadLocations;
   final String phone;
-  final int elCoins;
-  final int elFrags;
-  final int rankPoints;
-  String accountStatus;
+  final String? profilePicUrl;
+  final Map<String, dynamic> questionAnswerForm;
+  final List<dynamic> reviews;
+  final String smsTemplate;
+  final String uid;
+  final String userName;
 
   UserModel({
+    required this.accountType,
+    required this.cardExpiry,
+    required this.cardNumber,
+    this.companyInfo,
+    this.completedServices,
+    required this.country,
+    required this.creditHistoryList,
+    required this.credits,
+    required this.deviceToken,
+    required this.email,
+    required this.emailTemplate,
+    required this.lastSeen,
+    required this.leadLocations,
+    required this.phone,
+    this.profilePicUrl,
+    required this.questionAnswerForm,
+    required this.reviews,
+    required this.smsTemplate,
     required this.uid,
     required this.userName,
-    required this.email,
-    this.deviceToken,
-    required this.isAdmin,
-    this.profilePicUrl,
-    this.coverPicUrl,
-    required this.nativeLanguage,
-    required this.preferredLanguages,
-    required this.country,
-    required this.followers,
-    required this.follow,
-    required this.visitors,
-    required this.rank,
-    required this.isPremium,
-    required this.selfIntroduction,
-    required this.age,
-    required this.gender,
-    required this.isOnline,
-    required this.giftReceived,
-    required this.giftSent,
-    required this.phone,
-    required this.elCoins,
-    required this.elFrags,
-    required this.rankPoints,
-    this.accountStatus = 'active',
   });
 
-  Map<String, dynamic> toJson() {
+  /// Factory constructor to create `UserModel` from a `Map<String, dynamic>`
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
+      accountType: map['accountType']?.toString() ?? '',
+      cardExpiry: map['cardExpiry']?.toString() ?? '',
+      cardNumber: map['cardNumber']?.toString() ?? '',
+      companyInfo: map['companyInfo'] is String
+          ? jsonDecode(map['companyInfo']) // Convert String JSON to Map
+          : map['companyInfo'] as Map<String, dynamic>?, // Already a Map
+      completedServices: map['completedServices'] is int
+          ? map['completedServices']
+          : int.tryParse(map['completedServices']?.toString() ?? '0'),
+      country: map['country']?.toString() ?? '',
+      creditHistoryList: List<dynamic>.from(map['creditHistoryList'] ?? []),
+      credits: map['credits'] is int
+          ? map['credits']
+          : int.tryParse(map['credits']?.toString() ?? '0') ?? 0,
+      deviceToken: map['deviceToken']?.toString() ?? '',
+      email: map['email']?.toString() ?? '',
+      emailTemplate: map['emailTemplate']?.toString() ?? '',
+      lastSeen: map['lastSeen']?.toString() ?? '',
+      leadLocations: List<dynamic>.from(map['leadLocations'] ?? []),
+      phone: map['phone']?.toString() ?? '',
+      profilePicUrl: map['profilePicUrl']?.toString(),
+      questionAnswerForm: Map<String, dynamic>.from(map['questionAnswerForm'] ?? {}),
+      reviews: List<dynamic>.from(map['reviews'] ?? []),
+      smsTemplate: map['smsTemplate']?.toString() ?? '',
+      uid: map['uid']?.toString() ?? '',
+      userName: map['userName']?.toString() ?? '',
+    );
+  }
+
+  /// Convert `UserModel` to a `Map<String, dynamic>`
+  Map<String, dynamic> toMap() {
     return {
-      'userName': userName,
+      'accountType': accountType,
+      'cardExpiry': cardExpiry,
+      'cardNumber': cardNumber,
+      'companyInfo': companyInfo, // Now properly storing as a Map
+      'completedServices': completedServices,
+      'country': country,
+      'creditHistoryList': creditHistoryList,
+      'credits': credits,
       'deviceToken': deviceToken,
       'email': email,
-      'isAdmin': isAdmin,
-      'profilePicUrl': profilePicUrl,
-      'coverPicUrl': coverPicUrl,
-      'nativeLanguage': nativeLanguage,
-      'preferredLanguages': preferredLanguages,
-      'country': country,
-      'followers': followers,
-      'follow': follow,
-      'visitors': visitors,
-      'rank': rank,
-      'premium': isPremium,
-      'selfIntroduction': selfIntroduction,
-      'age': age,
-      'gender': gender,
-      'isOnline': isOnline,
-      'giftSent': giftSent,
-      'giftReceived': giftReceived,
-      'uid': uid,
+      'emailTemplate': emailTemplate,
+      'lastSeen': lastSeen,
+      'leadLocations': leadLocations,
       'phone': phone,
-      'elCoins': elCoins,
-      'elFrags': elFrags,
-      'rankPoints': rankPoints,
-      'accountStatus': accountStatus,
+      'profilePicUrl': profilePicUrl,
+      'questionAnswerForm': questionAnswerForm,
+      'reviews': reviews,
+      'smsTemplate': smsTemplate,
+      'uid': uid,
+      'userName': userName,
     };
-  }
-
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      uid: json['uid'] ?? '',
-      userName: json['userName'] ?? '',
-      email: json['email'] ?? '',
-      isAdmin: json['isAdmin'] ?? false,
-      profilePicUrl: json['profilePicUrl'],
-      coverPicUrl: json['coverPicUrl'],
-      nativeLanguage: json['nativeLanguage'] ?? '',
-      preferredLanguages: List<String>.from(json['preferredLanguages'] ?? []),
-      country: json['country'] ?? '',
-      followers: json['followers'] ?? 0,
-      follow: json['follow'] ?? 0,
-      visitors: json['visitors'] ?? 0,
-      rank: json['rank'] ?? 0,
-      isPremium: json['premium'] ?? false,
-      selfIntroduction: json['selfIntroduction'] ?? '',
-      age: json['age'] ?? 0,
-      gender: json['gender'] ?? '',
-      isOnline: json['isOnline'] ?? false,
-      giftReceived: json['giftReceived'] ?? 0,
-      giftSent: json['giftSent'] ?? 0,
-      phone: json['phone'] ?? '',
-      deviceToken: json['deviceToken'],
-      elCoins: json['elCoins'],
-      elFrags: json['elFrags'],
-      rankPoints: json['rankPoints'],
-      accountStatus: json['accountStatus'],
-    );
-  }
-
-  static UserModel fromMap(Map<String, dynamic> map) {
-    return UserModel(
-      uid: map['uid'] ?? '',
-      userName: map['userName'] ?? '',
-      email: map['email'] ?? '',
-      isAdmin: map['isAdmin'] ?? false,
-      profilePicUrl: map['profilePicUrl'],
-      coverPicUrl: map['coverPicUrl'],
-      nativeLanguage: map['nativeLanguage'] ?? '',
-      preferredLanguages: List<String>.from(map['preferredLanguages'] ?? []),
-      country: map['country'] ?? '',
-      followers: map['followers'] ?? 0,
-      follow: map['follow'] ?? 0,
-      visitors: map['visitors'] ?? 0,
-      rank: map['rank'] ?? 0,
-      isPremium: map['premium'] ?? false,
-      selfIntroduction: map['selfIntroduction'] ?? '',
-      age: map['age'] ?? 0,
-      gender: map['gender'] ?? '',
-      isOnline: map['isOnline'] ?? false,
-      giftReceived: map['giftReceived'] ?? 0,
-      giftSent: map['giftSent'] ?? 0,
-      phone: map['phone'] ?? '',
-      deviceToken: map['deviceToken'],
-      elFrags: map['elFrags'],
-      elCoins: map['elCoins'],
-      rankPoints: map['rankPoints'],
-      accountStatus: map['accountStatus'],
-    );
   }
 }

@@ -20,18 +20,15 @@ class ContactScreenState extends State<ContactScreen> {
     _fetchContactInfo();
   }
 
-  // Method to fetch contact info from Firestore
+  // Fetch contact info from Firestore
   Future<void> _fetchContactInfo() async {
     try {
-      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
-          .collection('contacts')
-          .doc('contact_info')
-          .get();
+      DocumentSnapshot documentSnapshot =
+      await FirebaseFirestore.instance.collection('support').doc('contact').get();
 
       if (documentSnapshot.exists) {
-        // Set the fetched values to the controllers
         _emailController.text = documentSnapshot.get('email') ?? '';
-        _phoneController.text = documentSnapshot.get('phone') ?? '';
+        _phoneController.text = documentSnapshot.get('phoneNumber') ?? ''; // Fix key name
       } else {
         print('Document does not exist.');
       }
@@ -44,15 +41,12 @@ class ContactScreenState extends State<ContactScreen> {
     });
   }
 
-  // Method to update contact info in Firestore
+  // Update contact info in Firestore
   Future<void> _updateContactInfo() async {
     try {
-      await FirebaseFirestore.instance
-          .collection('contacts')
-          .doc('contact_info')
-          .update({
+      await FirebaseFirestore.instance.collection('support').doc('contact').update({
         'email': _emailController.text,
-        'phone': _phoneController.text,
+        'phoneNumber': _phoneController.text, // Fix key name
       });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Contact info updated successfully!')),
@@ -68,36 +62,30 @@ class ContactScreenState extends State<ContactScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin Contact Info'),
-      ),
+      appBar: AppBar(title: const Text('Admin Contact Info')),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  TextField(
-                    controller: _phoneController,
-                    decoration: const InputDecoration(
-                      labelText: 'Phone',
-                    ),
-                  ),
-                  const SizedBox(height: 32.0),
-                  ElevatedButton(
-                    onPressed: _updateContactInfo,
-                    child: const Text('Update'),
-                  ),
-                ],
-              ),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
+            const SizedBox(height: 16.0),
+            TextField(
+              controller: _phoneController,
+              decoration: const InputDecoration(labelText: 'Phone Number'),
+            ),
+            const SizedBox(height: 32.0),
+            ElevatedButton(
+              onPressed: _updateContactInfo,
+              child: const Text('Update'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

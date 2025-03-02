@@ -47,12 +47,12 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyC4d1QpYUMRPacqC8w1qWqeZlixg8it6dU',
-    appId: '1:622260458070:web:34b4e054756ea1fe9261f7',
-    messagingSenderId: '622260458070',
-    projectId: 'el-talk',
-    authDomain: 'el-talk.firebaseapp.com',
-    storageBucket: 'el-talk.appspot.com',
+    apiKey: 'AIzaSyAKfmzzoZy6JICJzWDBB4s9j3_-s1ipmnk',
+    appId: '1:881326841035:web:df81cffcba2799d3cd8f4e',
+    messagingSenderId: '881326841035',
+    projectId: 'pest-control-b0140',
+    authDomain: 'pest-control-b0140.firebaseapp.com',
+    storageBucket: 'pest-control-b0140.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(

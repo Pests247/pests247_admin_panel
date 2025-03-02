@@ -70,7 +70,7 @@ class _AllUsersState extends State<AllUsers> {
                 Expanded(
                     flex: 2, child: Text('Country', style: _headerStyle())),
                 Expanded(
-                    flex: 1, child: Text('Followers', style: _headerStyle())),
+                    flex: 1, child: Text('Account Type', style: _headerStyle())),
               ],
             ),
           ),
@@ -90,7 +90,7 @@ class _AllUsersState extends State<AllUsers> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => UserDetail(user: user),
+                          builder: (context) => UserDetailsScreen(user: user),
                         ),
                       );
                     },
@@ -118,18 +118,26 @@ class _AllUsersState extends State<AllUsers> {
                               Expanded(flex: 2, child: Text(user.country)),
                               Expanded(
                                   flex: 1,
-                                  child: Row(
+                                  child:Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.center, // Ensure vertical alignment
                                     children: [
-                                      Icon(Icons.people,
-                                          color: Colors.grey[600]),
+                                      SizedBox(
+                                        width: 24, // Fixed width for the icon
+                                        child: Icon(Icons.account_circle, color: Colors.grey[600]),
+                                      ),
                                       const SizedBox(width: 5),
-                                      Text('${user.followers}',
-                                          style: TextStyle(
-                                              color: Colors.grey[800])),
+                                      Expanded( // Prevents text overflow
+                                        child: Text(
+                                          user.accountType == 'client'? 'Client':'Service Provider',
+                                          style: TextStyle(color: Colors.grey[800]),
+                                          overflow: TextOverflow.ellipsis, // Optional: Prevents long text issues
+                                        ),
+                                      ),
                                     ],
-                                  )),
-                            ],
+                                  ),)
+
+                                ],
                           ),
                         ),
                       ),

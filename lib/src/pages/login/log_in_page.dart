@@ -31,10 +31,10 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> login() async {
     try {
       // Check Firestore for admin access
-      DocumentSnapshot adminDoc =
-          await _firestore.collection('admins').doc(email).get();
+      // DocumentSnapshot adminDoc =
+      //     await _firestore.collection('admins').doc(email).get();
 
-      if (adminDoc.exists && adminDoc['haveAccess'] == true) {
+      // if (adminDoc.exists && adminDoc['haveAccess'] == true) {
         // Proceed with Firebase Authentication
         UserCredential userCredential = await _auth.signInWithEmailAndPassword(
             email: email, password: password);
@@ -44,10 +44,10 @@ class _LoginPageState extends State<LoginPage> {
           context,
           MaterialPageRoute(builder: (context) => const Homepage()),
         );
-      } else {
-        // Show error if the admin does not exist or does not have access
-        _showErrorDialog("Access denied. You are not authorized.");
-      }
+      // } else {
+      //   // Show error if the admin does not exist or does not have access
+      //   _showErrorDialog("Access denied. You are not authorized.");
+      // }
     } on FirebaseAuthException catch (e) {
       // Handle errors from Firebase Authentication
       _showErrorDialog(e.message ?? "An error occurred during login.");
